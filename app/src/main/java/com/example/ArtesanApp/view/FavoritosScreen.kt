@@ -33,10 +33,10 @@ import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
-import com.example.ArtesanApp.view.componentes.BarraInferior
-import com.example.ArtesanApp.view.componentes.BarraSuperior
-import com.example.ArtesanApp.view.componentes.Encabezado
-import com.example.ArtesanApp.view.componentes.ProductoCard
+import com.example.ArtesanApp.componentes.BarraInferior
+import com.example.ArtesanApp.componentes.BarraSuperior
+import com.example.ArtesanApp.componentes.Encabezado
+import com.example.ArtesanApp.componentes.ProductoCard
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import kotlinx.coroutines.launch
 
@@ -65,7 +65,6 @@ fun FavoritosScreen(
             contentPadding = PaddingValues(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
             item {
                 Encabezado(
                     etiqueta = "Selección personal",
@@ -74,38 +73,35 @@ fun FavoritosScreen(
                 )
             }
 
-            // Una sección por cada categoría. "entries" es la lista de todos los valores del enum
-            for (categoria in Categoria.entries) {
-
-                val favoritosCategoria = favoritos.filter { it.categoria == categoria }
-
+            if (favoritos.isEmpty()) {
                 item {
-                    TituloCategoria(
-                        categoria = categoria.texto,
-                        cantidad = favoritosCategoria.size
+                    Text(
+                        text = "Aún no has guardado piezas favoritas.",
+                        color = TextoSecundario,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 20.dp)
                     )
                 }
-
-                if (favoritosCategoria.isEmpty()) {
-                    item {
-                        CategoriaVacia()
-                    }
-                }
-
+            } else {
                 items(
-                    items = favoritosCategoria,
-                    key = {
-                        it.id
-                    }
+                    items = favoritos,
+                    key = { it.id }
                 ) { producto ->
 
                     ProductoCard(
                         producto = producto,
                         esFavorito = true,
                         onFavoritoClick = {
-                            favoritoViewModel.cambiarFavorito(producto, true)
+                            favoritoViewModel.cambiarFavorito(
+                                producto = producto,
+                                esFavorito = true
+                            )
+
                             alcance.launch {
-                                snackbarHostState.showSnackbar("Quitado de favoritos")
+                                snackbarHostState.showSnackbar(
+                                    "Quitado de favoritos"
+                                )
                             }
                         },
                         onVerDetalleClick = {
@@ -116,52 +112,4 @@ fun FavoritosScreen(
             }
         }
     }
-}
-
-// "Cerámica .......... 1 guardado"
-@Composable
-fun TituloCategoria(
-    categoria: String,
-    cantidad: Int
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = categoria,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextoOscuro
-        )
-
-        Text(
-            text = if (cantidad == 1) "1 guardado" else "$cantidad guardados",
-            fontSize = 13.sp,
-            color = TextoSecundario
-        )
-    }
-}
-
-// Recuadro con borde punteado cuando la categoría no tiene favoritos
-@Composable
-fun CategoriaVacia() {
-    Text(
-        text = "Aún no has guardado piezas de esta categoría.",
-        color = TextoSecundario,
-        modifier = Modifier
-            .fillMaxWidth()
-            .drawBehind {
-                drawRoundRect(
-                    color = Borde,
-                    cornerRadius = CornerRadius(20.dp.toPx()),
-                    style = Stroke(
-                        width = 2.dp.toPx(),
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(15f, 15f))
-                    )
-                )
-            }
-            .padding(20.dp)
-    )
 }

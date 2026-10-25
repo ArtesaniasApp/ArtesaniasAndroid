@@ -40,9 +40,9 @@ import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.ui.theme.Celeste
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoOscuro
-import com.example.ArtesanApp.view.componentes.BarraSuperior
-import com.example.ArtesanApp.view.componentes.Encabezado
-import com.example.ArtesanApp.view.componentes.FiltroDesplegable
+import com.example.ArtesanApp.componentes.BarraSuperior
+import com.example.ArtesanApp.componentes.Encabezado
+import com.example.ArtesanApp.componentes.FiltroDesplegable
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 
 // CU06: formulario para crear (idProducto = 0) o editar un producto

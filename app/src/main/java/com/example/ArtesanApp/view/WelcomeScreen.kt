@@ -132,7 +132,7 @@ fun WelcomeScreen(
 
                 // Descripción
                 Text(
-                    text = "Tienda de artesanías hechas 100% a mano y con cariño.",
+                    text = "Tienda de artesanías hechas 100% a mano, con cariño.",
                     fontSize = 16.sp,
                     lineHeight = 20.sp,
                     color = TextoSecundario

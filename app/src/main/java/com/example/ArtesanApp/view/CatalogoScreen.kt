@@ -36,11 +36,11 @@ import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.model.OrdenCatalogo
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoSecundario
-import com.example.ArtesanApp.view.componentes.BarraInferior
-import com.example.ArtesanApp.view.componentes.BarraSuperior
-import com.example.ArtesanApp.view.componentes.Encabezado
-import com.example.ArtesanApp.view.componentes.FiltroDesplegable
-import com.example.ArtesanApp.view.componentes.ProductoCard
+import com.example.ArtesanApp.componentes.BarraInferior
+import com.example.ArtesanApp.componentes.BarraSuperior
+import com.example.ArtesanApp.componentes.Encabezado
+import com.example.ArtesanApp.componentes.FiltroDesplegable
+import com.example.ArtesanApp.componentes.ProductoCard
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import kotlinx.coroutines.launch

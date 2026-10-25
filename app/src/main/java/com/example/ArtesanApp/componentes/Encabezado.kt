@@ -1,4 +1,4 @@
-package com.example.ArtesanApp.view.componentes
+package com.example.ArtesanApp.componentes
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

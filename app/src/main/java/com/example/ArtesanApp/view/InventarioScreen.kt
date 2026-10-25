@@ -46,10 +46,10 @@ import com.example.ArtesanApp.ui.theme.Celeste
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
-import com.example.ArtesanApp.view.componentes.BarraSuperior
-import com.example.ArtesanApp.view.componentes.Encabezado
-import com.example.ArtesanApp.view.componentes.FiltroDesplegable
-import com.example.ArtesanApp.view.componentes.formatearPrecio
+import com.example.ArtesanApp.componentes.BarraSuperior
+import com.example.ArtesanApp.componentes.Encabezado
+import com.example.ArtesanApp.componentes.FiltroDesplegable
+import com.example.ArtesanApp.componentes.formatearPrecio
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 
 // CU06: el administrador gestiona el inventario (stock, estado, crear y editar productos)

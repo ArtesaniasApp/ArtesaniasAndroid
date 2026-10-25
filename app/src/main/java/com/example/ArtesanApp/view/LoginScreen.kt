@@ -183,7 +183,8 @@ fun LoginScreen(
 
                         if (validador) {
                             mostrarAlerta = false
-                            // Inicio de sesión correcto
+                            // Inicio de sesión correcto: AppNavigation decide a qué pantalla ir
+                            onLoginClick(loginViewModel.email, loginViewModel.password)
                         } else {
                             mostrarAlerta = true
                         }
