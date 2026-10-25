@@ -2,7 +2,6 @@ package com.example.ArtesanApp.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,21 +16,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.ArtesanApp.model.Categoria
-import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Fondo
-import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.componentes.BarraInferior
 import com.example.ArtesanApp.componentes.BarraSuperior
@@ -40,7 +29,7 @@ import com.example.ArtesanApp.componentes.ProductoCard
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import kotlinx.coroutines.launch
 
-// CU02: favoritos del usuario guardados en Room, agrupados por categoría
+// CU02: favoritos del usuario guardados en Room, del más reciente al más antiguo
 @Composable
 fun FavoritosScreen(
     navController: NavController,
