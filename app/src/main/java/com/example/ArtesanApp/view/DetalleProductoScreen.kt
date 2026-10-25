@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ArtesanApp.model.Producto
+import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Celeste
 import com.example.ArtesanApp.ui.theme.Fondo
@@ -119,7 +120,7 @@ fun DetalleProductoScreen(
             }
 
             val esFavorito = favoritos.any { it.id == producto.id }
-            val hayStock = producto.estado == "DISPONIBLE" && producto.stockDisponible > 0
+            val hayStock = producto.estado == EstadoProducto.DISPONIBLE && producto.stockDisponible > 0
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -134,7 +135,7 @@ fun DetalleProductoScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Etiqueta(texto = producto.categoria)
+            Etiqueta(texto = producto.categoria.texto)
 
             Spacer(modifier = Modifier.height(8.dp))
 

@@ -34,8 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.ArtesanApp.model.Categoria
+import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.Producto
-import com.example.ArtesanApp.model.listaCategorias
 import com.example.ArtesanApp.ui.theme.Celeste
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoOscuro
@@ -58,7 +59,7 @@ fun ProductoFormScreen(
 
     // remember(productoEditar): cuando llega el producto desde Room, los campos se llenan con sus datos
     var nombre by remember(productoEditar) { mutableStateOf(productoEditar?.nombre ?: "") }
-    var categoria by remember(productoEditar) { mutableStateOf(productoEditar?.categoria ?: listaCategorias[0]) }
+    var categoria by remember(productoEditar) { mutableStateOf(productoEditar?.categoria ?: Categoria.CERAMICA) }
     var material by remember(productoEditar) { mutableStateOf(productoEditar?.material ?: "") }
     var descripcion by remember(productoEditar) { mutableStateOf(productoEditar?.descripcion ?: "") }
     var descripcionMaterial by remember(productoEditar) { mutableStateOf(productoEditar?.descripcionMaterial ?: "") }
@@ -100,9 +101,11 @@ fun ProductoFormScreen(
 
             Text(text = "Categoría", color = TextoOscuro, fontWeight = FontWeight.Bold)
             FiltroDesplegable(
-                opciones = listaCategorias,
-                seleccionada = categoria,
-                onSeleccionar = { categoria = it },
+                opciones = Categoria.entries.map { it.texto },
+                seleccionada = categoria.texto,
+                onSeleccionar = { texto ->
+                    categoria = Categoria.entries.first { it.texto == texto }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -133,7 +136,7 @@ fun ProductoFormScreen(
                         mensajeError = "El stock debe ser un número igual o mayor a 0."
                     } else {
 
-                        val estadoActual = productoEditar?.estado ?: "DISPONIBLE"
+                        val estadoActual = productoEditar?.estado ?: EstadoProducto.DISPONIBLE
 
                         val producto = Producto(
                             id = productoEditar?.id ?: 0,

@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.Producto
-import com.example.ArtesanApp.model.listaEstados
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Celeste
 import com.example.ArtesanApp.ui.theme.Fondo
@@ -135,7 +135,7 @@ fun InventarioItem(
     producto: Producto,
     onRestarStock: () -> Unit,
     onSumarStock: () -> Unit,
-    onCambiarEstado: (String) -> Unit,
+    onCambiarEstado: (EstadoProducto) -> Unit,
     onEditar: () -> Unit
 ) {
     Card(
@@ -159,7 +159,7 @@ fun InventarioItem(
                         color = TextoOscuro
                     )
                     Text(
-                        text = "${producto.categoria} · ${producto.material} · ${formatearPrecio(producto.precioBase)}",
+                        text = "${producto.categoria.texto} ·${producto.material} · ${formatearPrecio(producto.precioBase)}",
                         fontSize = 13.sp,
                         color = TextoSecundario
                     )
@@ -203,10 +203,13 @@ fun InventarioItem(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
+                // Muestra los textos de los estados y devuelve el estado elegido
                 FiltroDesplegable(
-                    opciones = listaEstados,
-                    seleccionada = producto.estado,
-                    onSeleccionar = onCambiarEstado,
+                    opciones = EstadoProducto.entries.map { it.texto },
+                    seleccionada = producto.estado.texto,
+                    onSeleccionar = { texto ->
+                        onCambiarEstado(EstadoProducto.entries.first { it.texto == texto })
+                    },
                     modifier = Modifier.weight(1f)
                 )
             }

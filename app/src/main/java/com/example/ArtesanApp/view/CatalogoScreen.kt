@@ -32,8 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.ArtesanApp.model.listaCategorias
-import com.example.ArtesanApp.model.listaOrden
+import com.example.ArtesanApp.model.Categoria
+import com.example.ArtesanApp.model.OrdenCatalogo
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.view.componentes.BarraInferior
@@ -56,8 +56,9 @@ fun CatalogoScreen(
         mutableStateOf("")
     }
 
+    // null significa "Todas" las categorías
     var categoria by remember {
-        mutableStateOf("Todas")
+        mutableStateOf<Categoria?>(null)
     }
 
     var material by remember {
@@ -65,7 +66,7 @@ fun CatalogoScreen(
     }
 
     var orden by remember {
-        mutableStateOf("Destacados")
+        mutableStateOf(OrdenCatalogo.DESTACADOS)
     }
 
     val productos by productoViewModel.productos.collectAsState()
@@ -135,10 +136,14 @@ fun CatalogoScreen(
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
 
+                    // El filtro muestra textos; al elegir uno se busca la categoría con ese texto.
+                    // "Todas" no existe en el enum, por eso find devuelve null
                     FiltroDesplegable(
-                        opciones = listOf("Todas") + listaCategorias,
-                        seleccionada = categoria,
-                        onSeleccionar = { categoria = it },
+                        opciones = listOf("Todas") + Categoria.entries.map { it.texto },
+                        seleccionada = categoria?.texto ?: "Todas",
+                        onSeleccionar = { texto ->
+                            categoria = Categoria.entries.find { it.texto == texto }
+                        },
                         modifier = Modifier.weight(1f)
                     )
 
@@ -150,9 +155,11 @@ fun CatalogoScreen(
                     )
 
                     FiltroDesplegable(
-                        opciones = listaOrden,
-                        seleccionada = orden,
-                        onSeleccionar = { orden = it },
+                        opciones = OrdenCatalogo.entries.map { it.texto },
+                        seleccionada = orden.texto,
+                        onSeleccionar = { texto ->
+                            orden = OrdenCatalogo.entries.first { it.texto == texto }
+                        },
                         modifier = Modifier.weight(1f)
                     )
                 }

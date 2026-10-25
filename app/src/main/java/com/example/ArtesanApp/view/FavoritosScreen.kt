@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.ArtesanApp.model.listaCategorias
+import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoOscuro
@@ -74,14 +74,14 @@ fun FavoritosScreen(
                 )
             }
 
-            // Una sección por cada categoría
-            for (categoria in listaCategorias) {
+            // Una sección por cada categoría. "entries" es la lista de todos los valores del enum
+            for (categoria in Categoria.entries) {
 
                 val favoritosCategoria = favoritos.filter { it.categoria == categoria }
 
                 item {
                     TituloCategoria(
-                        categoria = categoria,
+                        categoria = categoria.texto,
                         cantidad = favoritosCategoria.size
                     )
                 }

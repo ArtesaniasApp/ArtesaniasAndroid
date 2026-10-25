@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Naranjo
@@ -58,11 +59,11 @@ fun ProductoCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row {
-                    Etiqueta(texto = producto.categoria)
+                    Etiqueta(texto = producto.categoria.texto)
 
-                    if (producto.estado == "AGOTADO") {
+                    if (producto.estado == EstadoProducto.AGOTADO) {
                         Spacer(modifier = Modifier.width(6.dp))
-                        Etiqueta(texto = "Agotado", colorFondo = Rosado, colorTexto = Naranjo)
+                        Etiqueta(texto = EstadoProducto.AGOTADO.texto, colorFondo = Rosado, colorTexto = Naranjo)
                     }
                 }
 

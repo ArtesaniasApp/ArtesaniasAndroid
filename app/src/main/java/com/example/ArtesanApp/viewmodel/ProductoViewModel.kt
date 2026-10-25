@@ -5,6 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ArtesanApp.database.AppDatabase
 import com.example.ArtesanApp.database.productosIniciales
+import com.example.ArtesanApp.model.Categoria
+import com.example.ArtesanApp.model.EstadoProducto
+import com.example.ArtesanApp.model.OrdenCatalogo
 import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.repository.ProductoRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -76,35 +79,36 @@ class ProductoViewModel(application: Application)
         )
     }
 
-    fun cambiarEstado(producto: Producto, nuevoEstado: String) {
+    fun cambiarEstado(producto: Producto, nuevoEstado: EstadoProducto) {
         actualizar(producto.copy(estado = nuevoEstado))
     }
 
     // Control de stock: sin unidades queda AGOTADO y con unidades vuelve a DISPONIBLE.
     // Un producto INACTIVO se mantiene inactivo hasta que el admin lo cambie.
-    fun calcularEstado(estadoActual: String, stock: Int): String {
+    fun calcularEstado(estadoActual: EstadoProducto, stock: Int): EstadoProducto {
 
-        if (estadoActual == "INACTIVO") {
-            return "INACTIVO"
+        if (estadoActual == EstadoProducto.INACTIVO) {
+            return EstadoProducto.INACTIVO
         }
 
         if (stock == 0) {
-            return "AGOTADO"
+            return EstadoProducto.AGOTADO
         }
 
-        return "DISPONIBLE"
+        return EstadoProducto.DISPONIBLE
     }
 
-    // Aplica el buscador y los 3 filtros del catálogo. Los productos INACTIVOS no se muestran al cliente
+    // Aplica el buscador y los 3 filtros del catálogo. Los productos INACTIVOS no se muestran al cliente.
+    // categoria = null significa "Todas"
     fun filtrarCatalogo(
         productos: List<Producto>,
         texto: String,
-        categoria: String,
+        categoria: Categoria?,
         material: String,
-        orden: String
+        orden: OrdenCatalogo
     ): List<Producto> {
 
-        var resultado = productos.filter { it.estado != "INACTIVO" }
+        var resultado = productos.filter { it.estado != EstadoProducto.INACTIVO }
 
         if (texto.isNotBlank()) {
             resultado = resultado.filter {
@@ -113,7 +117,7 @@ class ProductoViewModel(application: Application)
             }
         }
 
-        if (categoria != "Todas") {
+        if (categoria != null) {
             resultado = resultado.filter { it.categoria == categoria }
         }
 
@@ -122,10 +126,10 @@ class ProductoViewModel(application: Application)
         }
 
         resultado = when (orden) {
-            "Precio: menor a mayor" -> resultado.sortedBy { it.precioBase }
-            "Precio: mayor a menor" -> resultado.sortedByDescending { it.precioBase }
-            "Mayor disponibilidad" -> resultado.sortedByDescending { it.stockDisponible }
-            else -> resultado
+            OrdenCatalogo.DESTACADOS -> resultado
+            OrdenCatalogo.PRECIO_MENOR_A_MAYOR -> resultado.sortedBy { it.precioBase }
+            OrdenCatalogo.PRECIO_MAYOR_A_MENOR -> resultado.sortedByDescending { it.precioBase }
+            OrdenCatalogo.MAYOR_DISPONIBILIDAD -> resultado.sortedByDescending { it.stockDisponible }
         }
 
         return resultado

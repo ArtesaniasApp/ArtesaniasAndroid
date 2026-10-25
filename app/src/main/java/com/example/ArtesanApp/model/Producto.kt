@@ -8,8 +8,8 @@ import androidx.room3.PrimaryKey
 data class Producto(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val categoria: String,              // Cerámica, Textil, Madera, Joyería o Cestería
-    val estado: String,                 // DISPONIBLE, AGOTADO o INACTIVO
+    val categoria: Categoria,           // Room la guarda como texto (ej: "CERAMICA")
+    val estado: EstadoProducto,         // Room lo guarda como texto (ej: "DISPONIBLE")
     val nombre: String,
     val descripcion: String,
     val material: String,               // Material corto, se usa para filtrar (Greda, Lana...)
