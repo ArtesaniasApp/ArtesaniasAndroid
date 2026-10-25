@@ -16,3 +16,5 @@ build/
 # Otros
 .DS_Store
 /captures/
+# Contexto local para Claude Code
+CLAUDE.md
