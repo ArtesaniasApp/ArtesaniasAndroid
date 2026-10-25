@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.ArtesanApp.model.TipoUsuario
 import com.example.ArtesanApp.model.Usuario
 
 class LoginViewModel: ViewModel() {
@@ -18,7 +17,8 @@ class LoginViewModel: ViewModel() {
         password = nuevaPassword
     }
 
-    val usuarioRegistrado = Usuario(nombre = "victor", email = "duoc@.cl", password = "123", tipoUsuario = TipoUsuario.ADMIN)
+    // tipoUsuarioId = 2 -> ADMIN (ver tabla tipo_usuario)
+    val usuarioRegistrado = Usuario(nombre = "victor", email = "duoc@.cl", password = "123", tipoUsuarioId = 2)
 
     fun iniciarSesion(): Boolean {
         var validador = false

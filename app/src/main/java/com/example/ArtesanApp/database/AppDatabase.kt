@@ -8,12 +8,14 @@ import com.example.ArtesanApp.dao.FavoritoDao
 import com.example.ArtesanApp.dao.ProductoDao
 import com.example.ArtesanApp.model.Favorito
 import com.example.ArtesanApp.model.Producto
+import com.example.ArtesanApp.model.TipoUsuario
+import com.example.ArtesanApp.model.Usuario
 
 // Base de datos única de la app. Para agregar una tabla nueva: sumarla a "entities",
 // agregar su función abstracta del DAO y subir "version".
 @Database(
-    entities = [Producto::class, Favorito::class],
-    version = 1,
+    entities = [Producto::class, Favorito::class, TipoUsuario::class, Usuario::class],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {
