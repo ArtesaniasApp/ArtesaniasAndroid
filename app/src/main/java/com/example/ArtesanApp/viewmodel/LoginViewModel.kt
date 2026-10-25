@@ -23,9 +23,13 @@ class LoginViewModel: ViewModel() {
     fun iniciarSesion(): Boolean {
         var validador = false
 
-        if(email == usuarioRegistrado.password && password == usuarioRegistrado.password) {
+        if (
+            email == usuarioRegistrado.email &&
+            password == usuarioRegistrado.password
+        ) {
             validador = true
         }
+
         return validador
     }
 }
