@@ -34,6 +34,10 @@ fun AppNavigation(
     val carritoViewModel: CarritoViewModel = viewModel()
     val solicitudViewModel: SolicitudViewModel = viewModel()
 
+    // Por ahora la app tiene un solo usuario y es el administrador.
+    // Cuando se conecte el backend, este valor saldrá del rol del usuario que inició sesión
+    val esAdmin = true
+
     NavHost(
         navController = navController,
         startDestination = "welcome"
@@ -74,7 +78,8 @@ fun AppNavigation(
                 navController = navController,
                 productoViewModel = productoViewModel,
                 favoritoViewModel = favoritoViewModel,
-                carritoViewModel = carritoViewModel
+                carritoViewModel = carritoViewModel,
+                esAdmin = esAdmin
             )
         }
 

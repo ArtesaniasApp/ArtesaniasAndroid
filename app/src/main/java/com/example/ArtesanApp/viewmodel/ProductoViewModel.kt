@@ -83,6 +83,17 @@ class ProductoViewModel(application: Application)
         actualizar(producto.copy(estado = nuevoEstado))
     }
 
+    // Botón "Modificar" del admin en el catálogo: guarda el stock y el estado elegidos.
+    // calcularEstado corrige el estado si no calza con el stock (ej: Disponible con 0 unidades -> Agotado)
+    fun modificarStockYEstado(producto: Producto, nuevoStock: Int, nuevoEstado: EstadoProducto) {
+        actualizar(
+            producto.copy(
+                stockDisponible = nuevoStock,
+                estado = calcularEstado(nuevoEstado, nuevoStock)
+            )
+        )
+    }
+
     // Control de stock: sin unidades queda AGOTADO y con unidades vuelve a DISPONIBLE.
     // Un producto INACTIVO se mantiene inactivo hasta que el admin lo cambie.
     fun calcularEstado(estadoActual: EstadoProducto, stock: Int): EstadoProducto {
@@ -98,17 +109,23 @@ class ProductoViewModel(application: Application)
         return EstadoProducto.DISPONIBLE
     }
 
-    // Aplica el buscador y los 3 filtros del catálogo. Los productos INACTIVOS no se muestran al cliente.
+    // Aplica el buscador y los 3 filtros del catálogo.
+    // Los productos INACTIVOS no se muestran al cliente, pero sí al admin (esAdmin = true).
     // categoria = null significa "Todas"
     fun filtrarCatalogo(
         productos: List<Producto>,
         texto: String,
         categoria: Categoria?,
         material: String,
-        orden: OrdenCatalogo
+        orden: OrdenCatalogo,
+        esAdmin: Boolean
     ): List<Producto> {
 
-        var resultado = productos.filter { it.estado != EstadoProducto.INACTIVO }
+        var resultado = productos
+
+        if (!esAdmin) {
+            resultado = resultado.filter { it.estado != EstadoProducto.INACTIVO }
+        }
 
         if (texto.isNotBlank()) {
             resultado = resultado.filter {

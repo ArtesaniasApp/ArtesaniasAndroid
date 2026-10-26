@@ -33,11 +33,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ArtesanApp.model.Categoria
+import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.OrdenCatalogo
+import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.componentes.BarraInferior
 import com.example.ArtesanApp.componentes.BarraSuperior
+import com.example.ArtesanApp.componentes.DialogoModificarProducto
 import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.FiltroDesplegable
 import com.example.ArtesanApp.componentes.ProductoCard
@@ -52,8 +55,8 @@ fun CatalogoScreen(
     navController: NavController,
     productoViewModel: ProductoViewModel = viewModel(),
     favoritoViewModel: FavoritoViewModel = viewModel(),
-    carritoViewModel: CarritoViewModel = viewModel()
-
+    carritoViewModel: CarritoViewModel = viewModel(),
+    esAdmin: Boolean = false
 ) {
     var textoBusqueda by remember {
         mutableStateOf("")
@@ -83,8 +86,14 @@ fun CatalogoScreen(
         texto = textoBusqueda,
         categoria = categoria,
         material = material,
-        orden = orden
+        orden = orden,
+        esAdmin = esAdmin
     )
+
+    // Producto que el admin está modificando. null = el pop up está cerrado
+    var productoModificar by remember {
+        mutableStateOf<Producto?>(null)
+    }
 
     // Aviso oscuro de abajo ("Añadido a favoritos")
     val snackbarHostState = remember { SnackbarHostState() }
@@ -211,20 +220,51 @@ fun CatalogoScreen(
                         navController.navigate("detalle/${producto.id}")
                     },
                     onCarritoClick = {
-                        val agregado = carritoViewModel.agregar(producto)
-
-                        alcance.launch {
-                            val mensaje = if (agregado) {
-                                "Añadido al carrito"
-                            } else {
-                                "Stock máximo alcanzado (${producto.stockDisponible} unidades)"
+                        // Un producto inactivo (solo lo ve el admin) no se puede comprar
+                        if (producto.estado == EstadoProducto.INACTIVO) {
+                            alcance.launch {
+                                snackbarHostState.showSnackbar("Producto inactivo: no se puede agregar")
                             }
+                        } else {
+                            val agregado = carritoViewModel.agregar(producto)
 
-                            snackbarHostState.showSnackbar(mensaje)
+                            alcance.launch {
+                                val mensaje = if (agregado) {
+                                    "Añadido al carrito"
+                                } else {
+                                    "Stock máximo alcanzado (${producto.stockDisponible} unidades)"
+                                }
+
+                                snackbarHostState.showSnackbar(mensaje)
+                            }
                         }
+                    },
+                    esAdmin = esAdmin,
+                    onModificarClick = {
+                        productoModificar = producto
                     }
                 )
             }
         }
+    }
+
+    // Pop up del admin para cambiar stock y estado
+    val producto = productoModificar
+
+    if (producto != null) {
+        DialogoModificarProducto(
+            producto = producto,
+            onCancelar = {
+                productoModificar = null
+            },
+            onGuardar = { nuevoStock, nuevoEstado ->
+                productoViewModel.modificarStockYEstado(producto, nuevoStock, nuevoEstado)
+                productoModificar = null
+
+                alcance.launch {
+                    snackbarHostState.showSnackbar("Producto actualizado")
+                }
+            }
+        )
     }
 }
