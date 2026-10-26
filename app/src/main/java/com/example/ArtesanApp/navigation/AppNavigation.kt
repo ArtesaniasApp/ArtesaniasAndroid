@@ -12,6 +12,7 @@ import com.example.ArtesanApp.view.FavoritosScreen
 import com.example.ArtesanApp.view.InventarioScreen
 import com.example.ArtesanApp.view.LoginScreen
 import com.example.ArtesanApp.view.ProductoFormScreen
+import com.example.ArtesanApp.view.RegistroScreen
 import com.example.ArtesanApp.view.WelcomeScreen
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
@@ -49,6 +50,13 @@ fun AppNavigation(
                         popUpTo("welcome") { inclusive = true }
                     }
                 }
+            )
+        }
+
+        // Pantalla de registro de clientes (se abre desde el login)
+        composable("registro") {
+            RegistroScreen(
+                navController = navController
             )
         }
 

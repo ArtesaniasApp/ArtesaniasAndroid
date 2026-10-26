@@ -15,7 +15,7 @@ import com.example.ArtesanApp.model.Usuario
 // agregar su función abstracta del DAO y subir "version".
 @Database(
     entities = [Producto::class, Favorito::class, TipoUsuario::class, Usuario::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {

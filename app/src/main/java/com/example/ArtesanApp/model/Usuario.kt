@@ -16,5 +16,6 @@ data class Usuario(
     val nombre: String,
     val email: String,
     val telefono: String? = null,
+    val direccion: String? = null,      // dirección de despacho, se pide en el registro
     val password: String
 )

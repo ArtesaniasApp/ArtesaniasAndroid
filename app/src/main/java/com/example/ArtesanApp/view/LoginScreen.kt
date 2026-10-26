@@ -227,6 +227,31 @@ fun LoginScreen(
                     }
 
                 }
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+
+                // Botón para ir al registro. CircleShape redondea los extremos: queda con forma de óvalo
+                Button(
+                    onClick = {
+                        navController.navigate("registro")
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF4BA0BF),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(
+                        text = "¡Regístrate acá!",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
