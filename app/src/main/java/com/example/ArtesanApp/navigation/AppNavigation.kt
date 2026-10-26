@@ -94,7 +94,8 @@ fun AppNavigation(
         composable("favoritos") {
             FavoritosScreen(
                 navController = navController,
-                favoritoViewModel = favoritoViewModel
+                favoritoViewModel = favoritoViewModel,
+                carritoViewModel = carritoViewModel
             )
         }
 
