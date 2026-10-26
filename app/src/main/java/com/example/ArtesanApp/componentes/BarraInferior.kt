@@ -2,6 +2,7 @@ package com.example.ArtesanApp.componentes
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -62,6 +63,14 @@ fun BarraInferior(
             label = {
                 Text("Carrito")
             },
+            colors = colores
+        )
+
+        NavigationBarItem(
+            selected = rutaActual == "solicitudes",
+            onClick = { navegarA(navController, "solicitudes") },
+            icon = { Icon(Icons.Outlined.Receipt, contentDescription = null) },
+            label = { Text("Solicitudes") },
             colors = colores
         )
     }

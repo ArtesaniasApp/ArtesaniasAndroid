@@ -8,16 +8,20 @@ import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ArtesanApp.view.CarritoScreen
 import com.example.ArtesanApp.view.CatalogoScreen
+import com.example.ArtesanApp.view.CheckoutScreen
 import com.example.ArtesanApp.view.DetalleProductoScreen
+import com.example.ArtesanApp.view.DetalleSolicitudScreen
 import com.example.ArtesanApp.view.FavoritosScreen
 import com.example.ArtesanApp.view.InventarioScreen
 import com.example.ArtesanApp.view.LoginScreen
 import com.example.ArtesanApp.view.ProductoFormScreen
 import com.example.ArtesanApp.view.RegistroScreen
+import com.example.ArtesanApp.view.SolicitudesScreen
 import com.example.ArtesanApp.view.WelcomeScreen
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
+import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 
 @Composable
 fun AppNavigation(
@@ -28,6 +32,7 @@ fun AppNavigation(
     val productoViewModel: ProductoViewModel = viewModel()
     val favoritoViewModel: FavoritoViewModel = viewModel()
     val carritoViewModel: CarritoViewModel = viewModel()
+    val solicitudViewModel: SolicitudViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -118,6 +123,34 @@ fun AppNavigation(
                 navController = navController,
                 carritoViewModel = carritoViewModel,
                 productoViewModel = productoViewModel
+            )
+        }
+
+        // Resumen de la compra, IVA y método de pago (pago simulado, no descuenta stock)
+        composable("checkout") {
+            CheckoutScreen(
+                navController = navController,
+                carritoViewModel = carritoViewModel,
+                productoViewModel = productoViewModel,
+                solicitudViewModel = solicitudViewModel
+            )
+        }
+
+        composable("solicitudes") {
+            SolicitudesScreen(
+                navController = navController,
+                solicitudViewModel = solicitudViewModel
+            )
+        }
+
+        // {numero} es el número de la solicitud, ej: "solicitud/2"
+        composable("solicitud/{numero}") { backStackEntry ->
+            val numero = backStackEntry.arguments?.getString("numero")?.toIntOrNull() ?: 0
+
+            DetalleSolicitudScreen(
+                navController = navController,
+                numeroSolicitud = numero,
+                solicitudViewModel = solicitudViewModel
             )
         }
     }

@@ -101,7 +101,7 @@ fun CarritoScreen(
 
                 Button(
                     onClick = {
-                        // Aquí conectaremos el proceso de compra.
+                        navController.navigate("checkout")
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
