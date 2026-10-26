@@ -81,7 +81,8 @@ fun AppNavigation(
                 navController = navController,
                 idProducto = idProducto,
                 productoViewModel = productoViewModel,
-                favoritoViewModel = favoritoViewModel
+                favoritoViewModel = favoritoViewModel,
+                carritoViewModel = carritoViewModel
             )
         }
 

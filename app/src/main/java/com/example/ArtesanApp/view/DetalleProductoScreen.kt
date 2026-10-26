@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Celeste
@@ -61,18 +60,19 @@ import com.example.ArtesanApp.componentes.BotonFavorito
 import com.example.ArtesanApp.componentes.Etiqueta
 import com.example.ArtesanApp.componentes.ImagenProducto
 import com.example.ArtesanApp.componentes.formatearPrecio
+import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import kotlinx.coroutines.launch
 
-// CU01: detalle de un producto. "onAgregarAlCarro" lo conecta el carro de compras
+// CU01: detalle de un producto. Desde aquí también se agrega al carro
 @Composable
 fun DetalleProductoScreen(
     navController: NavController,
     idProducto: Long,
     productoViewModel: ProductoViewModel = viewModel(),
     favoritoViewModel: FavoritoViewModel = viewModel(),
-    onAgregarAlCarro: (Producto, Int) -> Unit = { _, _ -> }
+    carritoViewModel: CarritoViewModel = viewModel()
 ) {
     var cantidadTexto by remember {
         mutableStateOf("1")
@@ -248,9 +248,15 @@ fun DetalleProductoScreen(
                     } else if (cantidad > producto.stockDisponible) {
                         mensajeError = "Solo quedan ${producto.stockDisponible} unidades."
                     } else {
-                        onAgregarAlCarro(producto, cantidad)
-                        alcance.launch {
-                            snackbarHostState.showSnackbar("Producto agregado al carro")
+                        // agregarCantidad revisa también lo que ya estaba en el carro
+                        val agregado = carritoViewModel.agregarCantidad(producto, cantidad)
+
+                        if (agregado) {
+                            alcance.launch {
+                                snackbarHostState.showSnackbar("Producto agregado al carro")
+                            }
+                        } else {
+                            mensajeError = "No hay stock suficiente (revisa lo que ya tienes en el carro)."
                         }
                     }
                 },
