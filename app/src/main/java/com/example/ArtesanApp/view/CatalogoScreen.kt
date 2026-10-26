@@ -43,6 +43,7 @@ import com.example.ArtesanApp.componentes.FiltroDesplegable
 import com.example.ArtesanApp.componentes.ProductoCard
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
+import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import kotlinx.coroutines.launch
 
 // CU01: el cliente explora el catálogo con buscador y 3 filtros
@@ -50,7 +51,9 @@ import kotlinx.coroutines.launch
 fun CatalogoScreen(
     navController: NavController,
     productoViewModel: ProductoViewModel = viewModel(),
-    favoritoViewModel: FavoritoViewModel = viewModel()
+    favoritoViewModel: FavoritoViewModel = viewModel(),
+    carritoViewModel: CarritoViewModel = viewModel()
+
 ) {
     var textoBusqueda by remember {
         mutableStateOf("")
@@ -133,71 +136,49 @@ fun CatalogoScreen(
             }
 
             // Filtros: categoría, material y orden
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-
-                    // El filtro muestra textos; al elegir uno se busca la categoría con ese texto.
-                    // "Todas" no existe en el enum, por eso find devuelve null
-                    FiltroDesplegable(
-                        opciones = listOf("Todas") + Categoria.entries.map { it.texto },
-                        seleccionada = categoria?.texto ?: "Todas",
-                        onSeleccionar = { texto ->
-                            categoria = Categoria.entries.find { it.texto == texto }
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    FiltroDesplegable(
-                        opciones = materiales,
-                        seleccionada = material,
-                        onSeleccionar = { material = it },
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    FiltroDesplegable(
-                        opciones = OrdenCatalogo.entries.map { it.texto },
-                        seleccionada = orden.texto,
-                        onSeleccionar = { texto ->
-                            orden = OrdenCatalogo.entries.first { it.texto == texto }
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            // productos.isNotEmpty(): no mostrar el aviso mientras Room todavía está cargando
-            if (productos.isNotEmpty() && productosFiltrados.isEmpty()) {
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(
-                        text = "No encontramos artesanías con esos filtros.",
-                        color = TextoSecundario
-                    )
-                }
-            }
-
             items(
                 items = productosFiltrados,
-                key = {
-                    it.id
-                }
+                key = { it.id }
             ) { producto ->
 
-                val esFavorito = favoritos.any { it.id == producto.id }
+                val esFavorito = favoritos.any {
+                    it.id == producto.id
+                }
 
                 ProductoCard(
                     producto = producto,
                     esFavorito = esFavorito,
                     onFavoritoClick = {
-                        favoritoViewModel.cambiarFavorito(producto, esFavorito)
+                        favoritoViewModel.cambiarFavorito(
+                            producto,
+                            esFavorito
+                        )
 
-                        val mensaje = if (esFavorito) "Quitado de favoritos" else "Añadido a favoritos"
+                        val mensaje = if (esFavorito) {
+                            "Quitado de favoritos"
+                        } else {
+                            "Añadido a favoritos"
+                        }
+
                         alcance.launch {
                             snackbarHostState.showSnackbar(mensaje)
                         }
                     },
                     onVerDetalleClick = {
                         navController.navigate("detalle/${producto.id}")
+                    },
+                    onCarritoClick = {
+                        val agregado = carritoViewModel.agregar(producto)
+
+                        alcance.launch {
+                            val mensaje = if (agregado) {
+                                "Añadido al carrito"
+                            } else {
+                                "Stock máximo alcanzado (${producto.stockDisponible} unidades)"
+                            }
+
+                            snackbarHostState.showSnackbar(mensaje)
+                        }
                     }
                 )
             }

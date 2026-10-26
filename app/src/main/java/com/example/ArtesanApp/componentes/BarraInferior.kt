@@ -7,6 +7,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -47,7 +48,22 @@ fun BarraInferior(
             colors = colores
         )
 
-        // Aquí se agrega el ítem "Carro" cuando exista su ruta
+        NavigationBarItem(
+            selected = rutaActual == "carrito",
+            onClick = {
+                navegarA(navController, "carrito")
+            },
+            icon = {
+                Icon(
+                    Icons.Outlined.ShoppingCart,
+                    contentDescription = "Carrito"
+                )
+            },
+            label = {
+                Text("Carrito")
+            },
+            colors = colores
+        )
     }
 }
 

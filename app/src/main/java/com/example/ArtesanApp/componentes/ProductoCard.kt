@@ -1,3 +1,4 @@
+
 package com.example.ArtesanApp.componentes
 
 import androidx.compose.foundation.BorderStroke
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedButton
@@ -35,12 +37,15 @@ fun ProductoCard(
     producto: Producto,
     esFavorito: Boolean,
     onFavoritoClick: () -> Unit,
-    onVerDetalleClick: () -> Unit
+    onVerDetalleClick: () -> Unit,
+    onCarritoClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
         border = BorderStroke(1.dp, Borde)
     ) {
         ImagenProducto(
@@ -63,7 +68,12 @@ fun ProductoCard(
 
                     if (producto.estado == EstadoProducto.AGOTADO) {
                         Spacer(modifier = Modifier.width(6.dp))
-                        Etiqueta(texto = EstadoProducto.AGOTADO.texto, colorFondo = Rosado, colorTexto = Naranjo)
+
+                        Etiqueta(
+                            texto = EstadoProducto.AGOTADO.texto,
+                            colorFondo = Rosado,
+                            colorTexto = Naranjo
+                        )
                     }
                 }
 
@@ -92,7 +102,7 @@ fun ProductoCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Material, precio y botón
+            // Material, precio y botón de detalle
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -104,6 +114,7 @@ fun ProductoCard(
                         fontSize = 12.sp,
                         color = TextoSecundario
                     )
+
                     Text(
                         text = formatearPrecio(producto.precioBase),
                         fontSize = 17.sp,
@@ -116,8 +127,22 @@ fun ProductoCard(
                     onClick = onVerDetalleClick,
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(text = "Ver detalle", color = TextoOscuro)
+                    Text(
+                        text = "Ver detalle",
+                        color = TextoOscuro
+                    )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Botón para agregar al carrito
+            Button(
+                onClick = onCarritoClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Agregar al carrito")
             }
         }
     }
