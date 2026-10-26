@@ -26,6 +26,7 @@ import com.example.ArtesanApp.componentes.BarraInferior
 import com.example.ArtesanApp.componentes.BarraSuperior
 import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.ProductoCard
+import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import kotlinx.coroutines.launch
 
@@ -33,7 +34,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun FavoritosScreen(
     navController: NavController,
-    favoritoViewModel: FavoritoViewModel = viewModel()
+    favoritoViewModel: FavoritoViewModel = viewModel(),
+    carritoViewModel: CarritoViewModel = viewModel()
 ) {
     val favoritos by favoritoViewModel.favoritos.collectAsState()
 
@@ -95,6 +97,15 @@ fun FavoritosScreen(
                         },
                         onVerDetalleClick = {
                             navController.navigate("detalle/${producto.id}")
+                        },
+                        onCarritoClick = {
+                            carritoViewModel.agregar(producto)
+
+                            alcance.launch {
+                                snackbarHostState.showSnackbar(
+                                    "Añadido al carrito"
+                                )
+                            }
                         }
                     )
                 }

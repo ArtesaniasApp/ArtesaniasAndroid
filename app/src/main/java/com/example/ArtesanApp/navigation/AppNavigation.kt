@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ArtesanApp.view.CarritoScreen
 import com.example.ArtesanApp.view.CatalogoScreen
 import com.example.ArtesanApp.view.DetalleProductoScreen
 import com.example.ArtesanApp.view.FavoritosScreen
@@ -14,6 +15,7 @@ import com.example.ArtesanApp.view.LoginScreen
 import com.example.ArtesanApp.view.ProductoFormScreen
 import com.example.ArtesanApp.view.RegistroScreen
 import com.example.ArtesanApp.view.WelcomeScreen
+import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 
@@ -25,6 +27,7 @@ fun AppNavigation(
     // Así, al guardar y volver atrás, la operación en Room no se cancela.
     val productoViewModel: ProductoViewModel = viewModel()
     val favoritoViewModel: FavoritoViewModel = viewModel()
+    val carritoViewModel: CarritoViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -61,12 +64,12 @@ fun AppNavigation(
         }
 
         // ---------- Tienda del cliente ----------
-
         composable("catalogo") {
             CatalogoScreen(
                 navController = navController,
                 productoViewModel = productoViewModel,
-                favoritoViewModel = favoritoViewModel
+                favoritoViewModel = favoritoViewModel,
+                carritoViewModel = carritoViewModel
             )
         }
 
@@ -105,6 +108,14 @@ fun AppNavigation(
             ProductoFormScreen(
                 navController = navController,
                 idProducto = idProducto,
+                productoViewModel = productoViewModel
+            )
+        }
+
+        composable("carrito") {
+            CarritoScreen(
+                navController = navController,
+                carritoViewModel = carritoViewModel,
                 productoViewModel = productoViewModel
             )
         }
