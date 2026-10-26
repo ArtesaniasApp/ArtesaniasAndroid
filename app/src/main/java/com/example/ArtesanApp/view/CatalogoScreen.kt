@@ -136,6 +136,49 @@ fun CatalogoScreen(
             }
 
             // Filtros: categoría, material y orden
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                    // El filtro muestra textos; al elegir uno se busca la categoría con ese texto.
+                    // "Todas" no existe en el enum, por eso find devuelve null
+                    FiltroDesplegable(
+                        opciones = listOf("Todas") + Categoria.entries.map { it.texto },
+                        seleccionada = categoria?.texto ?: "Todas",
+                        onSeleccionar = { texto ->
+                            categoria = Categoria.entries.find { it.texto == texto }
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    FiltroDesplegable(
+                        opciones = materiales,
+                        seleccionada = material,
+                        onSeleccionar = { material = it },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    FiltroDesplegable(
+                        opciones = OrdenCatalogo.entries.map { it.texto },
+                        seleccionada = orden.texto,
+                        onSeleccionar = { texto ->
+                            orden = OrdenCatalogo.entries.first { it.texto == texto }
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            // productos.isNotEmpty(): no mostrar el aviso mientras Room todavía está cargando
+            if (productos.isNotEmpty() && productosFiltrados.isEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "No encontramos artesanías con esos filtros.",
+                        color = TextoSecundario
+                    )
+                }
+            }
+
             items(
                 items = productosFiltrados,
                 key = { it.id }
