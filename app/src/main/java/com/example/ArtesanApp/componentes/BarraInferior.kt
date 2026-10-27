@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.example.ArtesanApp.ui.theme.CelesteClaro
 import com.example.ArtesanApp.ui.theme.CelesteOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
+import com.example.ArtesanApp.navigation.Routes
 
 // Barra de abajo del cliente. "rutaActual" indica qué ítem se ve seleccionado.
 @Composable
@@ -34,25 +35,25 @@ fun BarraInferior(
     NavigationBar(containerColor = Color.White) {
 
         NavigationBarItem(
-            selected = rutaActual == "catalogo",
-            onClick = { navegarA(navController, "catalogo") },
+            selected = rutaActual == Routes.CATALOGO,
+            onClick = { navegarA(navController, Routes.CATALOGO) },
             icon = { Icon(Icons.Outlined.Storefront, contentDescription = null) },
             label = { Text("Catálogo") },
             colors = colores
         )
 
         NavigationBarItem(
-            selected = rutaActual == "favoritos",
-            onClick = { navegarA(navController, "favoritos") },
+            selected = rutaActual == Routes.FAVORITOS,
+            onClick = { navegarA(navController, Routes.FAVORITOS) },
             icon = { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) },
             label = { Text("Favoritos") },
             colors = colores
         )
 
         NavigationBarItem(
-            selected = rutaActual == "carrito",
+            selected = rutaActual == Routes.CARRITO,
             onClick = {
-                navegarA(navController, "carrito")
+                navegarA(navController, Routes.CARRITO)
             },
             icon = {
                 Icon(
@@ -67,8 +68,8 @@ fun BarraInferior(
         )
 
         NavigationBarItem(
-            selected = rutaActual == "solicitudes",
-            onClick = { navegarA(navController, "solicitudes") },
+            selected = rutaActual == Routes.SOLICITUDES,
+            onClick = { navegarA(navController, Routes.SOLICITUDES) },
             icon = { Icon(Icons.Outlined.Receipt, contentDescription = null) },
             label = { Text("Solicitudes") },
             colors = colores
@@ -79,7 +80,7 @@ fun BarraInferior(
 // Navega sin apilar pantallas repetidas: vuelve hasta el catálogo y abre la ruta pedida
 private fun navegarA(navController: NavController, ruta: String) {
     navController.navigate(ruta) {
-        popUpTo("catalogo")
+        popUpTo(Routes.CATALOGO)
         launchSingleTop = true
     }
 }

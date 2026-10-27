@@ -39,6 +39,7 @@ import com.example.ArtesanApp.viewmodel.LoginViewModel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.navigation.NavController
+import com.example.ArtesanApp.navigation.Routes
 
 
 @Composable
@@ -235,7 +236,7 @@ fun LoginScreen(
                 // Botón para ir al registro. CircleShape redondea los extremos: queda con forma de óvalo
                 Button(
                     onClick = {
-                        navController.navigate("registro")
+                        navController.navigate(Routes.REGISTRO)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
