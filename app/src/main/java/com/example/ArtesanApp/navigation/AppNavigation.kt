@@ -15,6 +15,7 @@ import com.example.ArtesanApp.view.FavoritosScreen
 import com.example.ArtesanApp.view.InventarioScreen
 import com.example.ArtesanApp.view.LoginScreen
 import com.example.ArtesanApp.view.ProductoFormScreen
+import com.example.ArtesanApp.view.QrScreen
 import com.example.ArtesanApp.view.RegistroScreen
 import com.example.ArtesanApp.view.SolicitudesScreen
 import com.example.ArtesanApp.view.WelcomeScreen
@@ -47,7 +48,17 @@ fun AppNavigation(
             WelcomeScreen(
                 onIngresarClick = {
                     navController.navigate("login")
+                },
+                onEncuentranosClick = {
+                    navController.navigate("qr")
                 }
+            )
+        }
+
+        // Lector de códigos QR (se abre desde la bienvenida, no necesita iniciar sesión)
+        composable("qr") {
+            QrScreen(
+                navController = navController
             )
         }
 

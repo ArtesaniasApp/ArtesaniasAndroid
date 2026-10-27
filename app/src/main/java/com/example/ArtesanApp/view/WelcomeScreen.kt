@@ -14,14 +14,19 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +53,8 @@ import kotlinx.coroutines.delay
 // Portada de la app: versión y título arriba, carrusel de categorías al medio y botón Ingresar abajo
 @Composable
 fun WelcomeScreen(
-    onIngresarClick: () -> Unit = {}
+    onIngresarClick: () -> Unit = {},
+    onEncuentranosClick: () -> Unit = {}
 ) {
     // Una página del carrusel por cada categoría
     val categorias = Categoria.entries
@@ -166,6 +172,30 @@ fun WelcomeScreen(
                 Text(
                     text = "Ingresar",
                     fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Botón que lleva al lector QR
+            OutlinedButton(
+                onClick = onEncuentranosClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(14.dp),
+                border = BorderStroke(1.dp, Celeste),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color.White,
+                    contentColor = Celeste
+                )
+            ) {
+                Icon(Icons.Filled.QrCodeScanner, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "¡Encuéntranos acá!",
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
             }

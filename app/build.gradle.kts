@@ -56,11 +56,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
-    implementation(libs.google.code.scanner)
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.navigation:navigation-compose:2.9.5")
-    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
+    // Para leer el StateFlow con collectAsStateWithLifecycle() (pantalla QR)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
 
+    // Lector QR de Google (abre su propia cámara, no necesita permisos)
+    implementation(libs.google.code.scanner)
 
     // Íconos (corazón, carro, búsqueda...). La versión la define el BOM de Compose
     implementation(libs.androidx.compose.material.icons.extended)
