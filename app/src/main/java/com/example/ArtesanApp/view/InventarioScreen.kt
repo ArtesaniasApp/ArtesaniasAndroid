@@ -51,6 +51,7 @@ import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.FiltroDesplegable
 import com.example.ArtesanApp.componentes.formatearPrecio
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
+import com.example.ArtesanApp.navigation.Routes
 
 // CU06: el administrador gestiona el inventario (stock, estado, crear y editar productos)
 @Composable
@@ -85,7 +86,7 @@ fun InventarioScreen(
             item {
                 Button(
                     onClick = {
-                        navController.navigate("producto_form/0")
+                        navController.navigate("${Routes.PRODUCTO_FORM}/0")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,7 +122,7 @@ fun InventarioScreen(
                         productoViewModel.cambiarEstado(producto, nuevoEstado)
                     },
                     onEditar = {
-                        navController.navigate("producto_form/${producto.id}")
+                        navController.navigate("${Routes.PRODUCTO_FORM}/${producto.id}")
                     }
                 )
             }

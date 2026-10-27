@@ -45,6 +45,7 @@ import com.example.ArtesanApp.ui.theme.Marino
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.viewmodel.SolicitudViewModel
+import com.example.ArtesanApp.navigation.Routes
 
 // Mis solicitudes: lista de las compras del cliente. Solo se ven, el cliente no puede cancelarlas
 @Composable
@@ -56,7 +57,7 @@ fun SolicitudesScreen(
 
     Scaffold(
         topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController, "solicitudes") },
+        bottomBar = { BarraInferior(navController, Routes.SOLICITUDES) },
         containerColor = Fondo
     ) { innerPadding ->
 
@@ -83,7 +84,7 @@ fun SolicitudesScreen(
                     items(solicitudes.reversed()) { solicitud ->
                         TarjetaSolicitud(
                             solicitud = solicitud,
-                            onClick = { navController.navigate("solicitud/${solicitud.numero}") }
+                            onClick = { navController.navigate("${Routes.SOLICITUD}/${solicitud.numero}") }
                         )
                     }
                 }

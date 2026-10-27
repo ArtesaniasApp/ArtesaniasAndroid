@@ -20,6 +20,7 @@ import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import kotlinx.coroutines.flow.map
+import com.example.ArtesanApp.navigation.Routes
 
 @Composable
 fun CarritoScreen(
@@ -44,7 +45,7 @@ fun CarritoScreen(
             BarraSuperior()
         },
         bottomBar = {
-            BarraInferior(navController, "carrito")
+            BarraInferior(navController, Routes.CARRITO)
         }
     ) { innerPadding ->
 
@@ -101,7 +102,7 @@ fun CarritoScreen(
 
                 Button(
                     onClick = {
-                        navController.navigate("checkout")
+                        navController.navigate(Routes.CHECKOUT)
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

@@ -38,6 +38,7 @@ import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.viewmodel.SolicitudViewModel
+import com.example.ArtesanApp.navigation.Routes
 
 // Detalle de una solicitud: lista simple de productos × cantidad (sin imágenes), total y método de pago
 @Composable
@@ -53,7 +54,7 @@ fun DetalleSolicitudScreen(
 
     Scaffold(
         topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController, "solicitudes") },
+        bottomBar = { BarraInferior(navController, Routes.SOLICITUDES) },
         containerColor = Fondo
     ) { innerPadding ->
 

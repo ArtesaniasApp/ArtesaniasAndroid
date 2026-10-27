@@ -50,6 +50,7 @@ import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import kotlinx.coroutines.launch
+import com.example.ArtesanApp.navigation.Routes
 
 // CU01: el cliente explora el catálogo con buscador y 3 filtros
 @Composable
@@ -98,7 +99,7 @@ fun CatalogoScreen(
 
     Scaffold(
         topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController, "catalogo") },
+        bottomBar = { BarraInferior(navController, Routes.CATALOGO) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Fondo
     ) { innerPadding ->
@@ -123,7 +124,7 @@ fun CatalogoScreen(
                 item {
                     OutlinedButton(
                         onClick = {
-                            navController.navigate("inventario")
+                            navController.navigate(Routes.INVENTARIO)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
@@ -231,7 +232,7 @@ fun CatalogoScreen(
                         }
                     },
                     onVerDetalleClick = {
-                        navController.navigate("detalle/${producto.id}")
+                        navController.navigate("${Routes.DETALLE}/${producto.id}")
                     },
                     onCarritoClick = {
                         // Un producto inactivo (solo lo ve el admin) no se puede comprar

@@ -56,6 +56,7 @@ import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 import kotlin.math.roundToInt
+import com.example.ArtesanApp.navigation.Routes
 
 // Checkout: resumen del carro con subtotal, IVA y total, y elección del método de pago.
 // El pago es simulado: al confirmar se crea una solicitud en memoria y NO se descuenta stock en Room
@@ -89,7 +90,7 @@ fun CheckoutScreen(
 
     Scaffold(
         topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController, "carrito") },
+        bottomBar = { BarraInferior(navController, Routes.CARRITO) },
         containerColor = Fondo
     ) { innerPadding ->
 
@@ -251,8 +252,8 @@ fun CheckoutScreen(
                     onClick = {
                         numeroSolicitud = 0
                         carritoViewModel.vaciar()
-                        navController.navigate("solicitudes") {
-                            popUpTo("catalogo")
+                        navController.navigate(Routes.SOLICITUDES) {
+                            popUpTo(Routes.CATALOGO)
                         }
                     }
                 ) {

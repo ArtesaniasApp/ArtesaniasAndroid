@@ -41,50 +41,50 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = "welcome"
+        startDestination = Routes.WELCOME
     ) {
         // Pantalla de bienvenida
-        composable("welcome") {
+        composable(Routes.WELCOME) {
             WelcomeScreen(
                 onIngresarClick = {
-                    navController.navigate("login")
+                    navController.navigate(Routes.LOGIN)
                 },
                 onEncuentranosClick = {
-                    navController.navigate("qr")
+                    navController.navigate(Routes.QR)
                 }
             )
         }
 
         // Lector de códigos QR (se abre desde la bienvenida, no necesita iniciar sesión)
-        composable("qr") {
+        composable(Routes.QR) {
             QrScreen(
                 navController = navController
             )
         }
 
         // Pantalla de inicio de sesión
-        composable("login") {
+        composable(Routes.LOGIN) {
             LoginScreen(
                 navController = navController,
                 onLoginClick = { correo, contrasena ->
                     // Aquí conectaremos el inicio de sesión.
                     // Según el rol: CLIENTE -> "catalogo", ADMIN -> "inventario"
-                    navController.navigate("catalogo") {
-                        popUpTo("welcome") { inclusive = true }
+                    navController.navigate(Routes.CATALOGO) {
+                        popUpTo(Routes.WELCOME) { inclusive = true }
                     }
                 }
             )
         }
 
         // Pantalla de registro de clientes (se abre desde el login)
-        composable("registro") {
+        composable(Routes.REGISTRO) {
             RegistroScreen(
                 navController = navController
             )
         }
 
         // ---------- Tienda del cliente ----------
-        composable("catalogo") {
+        composable(Routes.CATALOGO) {
             CatalogoScreen(
                 navController = navController,
                 productoViewModel = productoViewModel,
@@ -95,7 +95,7 @@ fun AppNavigation(
         }
 
         // {idProducto} es un parámetro de la ruta, ej: "detalle/3"
-        composable("detalle/{idProducto}") { backStackEntry ->
+        composable("${Routes.DETALLE}/{idProducto}") { backStackEntry ->
             val idProducto = backStackEntry.arguments?.getString("idProducto")?.toLongOrNull() ?: 0
 
             DetalleProductoScreen(
@@ -107,7 +107,7 @@ fun AppNavigation(
             )
         }
 
-        composable("favoritos") {
+        composable(Routes.FAVORITOS) {
             FavoritosScreen(
                 navController = navController,
                 favoritoViewModel = favoritoViewModel,
@@ -117,7 +117,7 @@ fun AppNavigation(
 
         // ---------- Administración ----------
 
-        composable("inventario") {
+        composable(Routes.INVENTARIO) {
             InventarioScreen(
                 navController = navController,
                 productoViewModel = productoViewModel
@@ -125,7 +125,7 @@ fun AppNavigation(
         }
 
         // idProducto = 0 -> crear producto nuevo; otro número -> editar ese producto
-        composable("producto_form/{idProducto}") { backStackEntry ->
+        composable("${Routes.PRODUCTO_FORM}/{idProducto}") { backStackEntry ->
             val idProducto = backStackEntry.arguments?.getString("idProducto")?.toLongOrNull() ?: 0
 
             ProductoFormScreen(
@@ -135,7 +135,7 @@ fun AppNavigation(
             )
         }
 
-        composable("carrito") {
+        composable(Routes.CARRITO) {
             CarritoScreen(
                 navController = navController,
                 carritoViewModel = carritoViewModel,
@@ -144,7 +144,7 @@ fun AppNavigation(
         }
 
         // Resumen de la compra, IVA y método de pago (pago simulado, no descuenta stock)
-        composable("checkout") {
+        composable(Routes.CHECKOUT) {
             CheckoutScreen(
                 navController = navController,
                 carritoViewModel = carritoViewModel,
@@ -153,7 +153,7 @@ fun AppNavigation(
             )
         }
 
-        composable("solicitudes") {
+        composable(Routes.SOLICITUDES) {
             SolicitudesScreen(
                 navController = navController,
                 solicitudViewModel = solicitudViewModel
@@ -161,7 +161,7 @@ fun AppNavigation(
         }
 
         // {numero} es el número de la solicitud, ej: "solicitud/2"
-        composable("solicitud/{numero}") { backStackEntry ->
+        composable("${Routes.SOLICITUD}/{numero}") { backStackEntry ->
             val numero = backStackEntry.arguments?.getString("numero")?.toIntOrNull() ?: 0
 
             DetalleSolicitudScreen(

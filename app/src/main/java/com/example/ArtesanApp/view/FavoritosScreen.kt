@@ -29,6 +29,7 @@ import com.example.ArtesanApp.componentes.ProductoCard
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import kotlinx.coroutines.launch
+import com.example.ArtesanApp.navigation.Routes
 
 // CU02: favoritos del usuario guardados en Room, del más reciente al más antiguo
 @Composable
@@ -44,7 +45,7 @@ fun FavoritosScreen(
 
     Scaffold(
         topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController, "favoritos") },
+        bottomBar = { BarraInferior(navController, Routes.FAVORITOS) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Fondo
     ) { innerPadding ->
@@ -96,7 +97,7 @@ fun FavoritosScreen(
                             }
                         },
                         onVerDetalleClick = {
-                            navController.navigate("detalle/${producto.id}")
+                            navController.navigate("${Routes.DETALLE}/${producto.id}")
                         },
                         onCarritoClick = {
                             carritoViewModel.agregar(producto)

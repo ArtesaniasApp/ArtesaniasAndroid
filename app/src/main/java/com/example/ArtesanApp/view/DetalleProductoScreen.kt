@@ -64,6 +64,7 @@ import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import kotlinx.coroutines.launch
+import com.example.ArtesanApp.navigation.Routes
 
 // CU01: detalle de un producto. Desde aquí también se agrega al carro
 @Composable
@@ -93,7 +94,7 @@ fun DetalleProductoScreen(
 
     Scaffold(
         topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController, "catalogo") },
+        bottomBar = { BarraInferior(navController, Routes.CATALOGO) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Fondo
     ) { innerPadding ->
