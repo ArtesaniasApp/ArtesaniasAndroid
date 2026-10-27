@@ -1,0 +1,181 @@
+
+package com.example.ArtesanApp.componentes
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.ArtesanApp.model.EstadoProducto
+import com.example.ArtesanApp.model.Producto
+import com.example.ArtesanApp.ui.theme.Borde
+import com.example.ArtesanApp.ui.theme.Naranjo
+import com.example.ArtesanApp.ui.theme.Rosado
+import com.example.ArtesanApp.ui.theme.TextoOscuro
+import com.example.ArtesanApp.ui.theme.TextoSecundario
+
+// Tarjeta grande de un producto (catálogo y favoritos).
+// esAdmin = true muestra el botón "Modificar" (stock y estado). Favoritos no lo usa: queda en false
+@Composable
+fun ProductoCard(
+    producto: Producto,
+    esFavorito: Boolean,
+    onFavoritoClick: () -> Unit,
+    onVerDetalleClick: () -> Unit,
+    onCarritoClick: () -> Unit,
+    esAdmin: Boolean = false,
+    onModificarClick: () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        border = BorderStroke(1.dp, Borde)
+    ) {
+        ImagenProducto(
+            categoria = producto.categoria,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+        )
+
+        Column(modifier = Modifier.padding(16.dp)) {
+
+            // Chip de categoría y corazón
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row {
+                    Etiqueta(texto = producto.categoria.texto)
+
+                    if (producto.estado == EstadoProducto.AGOTADO) {
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Etiqueta(
+                            texto = EstadoProducto.AGOTADO.texto,
+                            colorFondo = Rosado,
+                            colorTexto = Naranjo
+                        )
+                    }
+
+                    // Solo el admin ve productos inactivos en el catálogo
+                    if (producto.estado == EstadoProducto.INACTIVO) {
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Etiqueta(
+                            texto = EstadoProducto.INACTIVO.texto,
+                            colorFondo = Borde,
+                            colorTexto = TextoSecundario
+                        )
+                    }
+                }
+
+                BotonFavorito(
+                    esFavorito = esFavorito,
+                    onClick = onFavoritoClick
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = producto.nombre,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextoOscuro
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = producto.descripcion,
+                fontSize = 14.sp,
+                color = TextoSecundario
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Material, precio y botón de detalle
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Column {
+                    Text(
+                        text = producto.material,
+                        fontSize = 12.sp,
+                        color = TextoSecundario
+                    )
+
+                    Text(
+                        text = formatearPrecio(producto.precioBase),
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextoOscuro
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = onVerDetalleClick,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "Ver detalle",
+                        color = TextoOscuro
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Botón para agregar al carrito
+            Button(
+                onClick = onCarritoClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Agregar al carrito")
+            }
+
+            // Botón del administrador: abre el pop up para cambiar stock y estado
+            if (esAdmin) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedButton(
+                    onClick = onModificarClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Outlined.Edit, contentDescription = null, tint = TextoOscuro)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Modificar", color = TextoOscuro)
+                }
+            }
+        }
+    }
+}
