@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedButton
@@ -35,16 +32,14 @@ import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 
 // Tarjeta grande de un producto (catálogo y favoritos).
-// esAdmin = true muestra el botón "Modificar" (stock y estado). Favoritos no lo usa: queda en false
+// La gestión del inventario (stock, estado, editar) se hace en InventarioScreen
 @Composable
 fun ProductoCard(
     producto: Producto,
     esFavorito: Boolean,
     onFavoritoClick: () -> Unit,
     onVerDetalleClick: () -> Unit,
-    onCarritoClick: () -> Unit,
-    esAdmin: Boolean = false,
-    onModificarClick: () -> Unit = {}
+    onCarritoClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -160,21 +155,6 @@ fun ProductoCard(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Agregar al carrito")
-            }
-
-            // Botón del administrador: abre el pop up para cambiar stock y estado
-            if (esAdmin) {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedButton(
-                    onClick = onModificarClick,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.Outlined.Edit, contentDescription = null, tint = TextoOscuro)
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Modificar", color = TextoOscuro)
-                }
             }
         }
     }

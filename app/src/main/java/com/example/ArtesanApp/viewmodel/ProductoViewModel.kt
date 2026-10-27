@@ -83,17 +83,6 @@ class ProductoViewModel(application: Application)
         actualizar(producto.copy(estado = nuevoEstado))
     }
 
-    // Botón "Modificar" del admin en el catálogo: guarda el stock y el estado elegidos.
-    // calcularEstado corrige el estado si no calza con el stock (ej: Disponible con 0 unidades -> Agotado)
-    fun modificarStockYEstado(producto: Producto, nuevoStock: Int, nuevoEstado: EstadoProducto) {
-        actualizar(
-            producto.copy(
-                stockDisponible = nuevoStock,
-                estado = calcularEstado(nuevoEstado, nuevoStock)
-            )
-        )
-    }
-
     // Control de stock: sin unidades queda AGOTADO y con unidades vuelve a DISPONIBLE.
     // Un producto INACTIVO se mantiene inactivo hasta que el admin lo cambie.
     fun calcularEstado(estadoActual: EstadoProducto, stock: Int): EstadoProducto {

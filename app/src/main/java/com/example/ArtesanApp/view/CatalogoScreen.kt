@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -35,12 +38,11 @@ import androidx.navigation.NavController
 import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.OrdenCatalogo
-import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.ui.theme.Fondo
+import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.componentes.BarraInferior
 import com.example.ArtesanApp.componentes.BarraSuperior
-import com.example.ArtesanApp.componentes.DialogoModificarProducto
 import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.FiltroDesplegable
 import com.example.ArtesanApp.componentes.ProductoCard
@@ -90,11 +92,6 @@ fun CatalogoScreen(
         esAdmin = esAdmin
     )
 
-    // Producto que el admin está modificando. null = el pop up está cerrado
-    var productoModificar by remember {
-        mutableStateOf<Producto?>(null)
-    }
-
     // Aviso oscuro de abajo ("Añadido a favoritos")
     val snackbarHostState = remember { SnackbarHostState() }
     val alcance = rememberCoroutineScope()
@@ -119,6 +116,23 @@ fun CatalogoScreen(
                     etiqueta = "Catálogo",
                     titulo = "Hecho a mano, cerca de ti"
                 )
+            }
+
+            // Solo el admin ve este botón: abre el inventario (crear, editar, stock y estado)
+            if (esAdmin) {
+                item {
+                    OutlinedButton(
+                        onClick = {
+                            navController.navigate("inventario")
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Outlined.Inventory2, contentDescription = null, tint = TextoOscuro)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(text = "Inventario", color = TextoOscuro)
+                    }
+                }
             }
 
             // Buscador
@@ -238,33 +252,9 @@ fun CatalogoScreen(
                                 snackbarHostState.showSnackbar(mensaje)
                             }
                         }
-                    },
-                    esAdmin = esAdmin,
-                    onModificarClick = {
-                        productoModificar = producto
                     }
                 )
             }
         }
-    }
-
-    // Pop up del admin para cambiar stock y estado
-    val producto = productoModificar
-
-    if (producto != null) {
-        DialogoModificarProducto(
-            producto = producto,
-            onCancelar = {
-                productoModificar = null
-            },
-            onGuardar = { nuevoStock, nuevoEstado ->
-                productoViewModel.modificarStockYEstado(producto, nuevoStock, nuevoEstado)
-                productoModificar = null
-
-                alcance.launch {
-                    snackbarHostState.showSnackbar("Producto actualizado")
-                }
-            }
-        )
     }
 }
