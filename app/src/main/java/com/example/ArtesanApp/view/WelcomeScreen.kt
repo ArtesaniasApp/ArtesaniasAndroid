@@ -50,18 +50,15 @@ import com.example.ArtesanApp.ui.theme.Rosado
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import kotlinx.coroutines.delay
 
-// Portada de la app: versión y título arriba, carrusel de categorías al medio y botón Ingresar abajo
 @Composable
 fun WelcomeScreen(
     onIngresarClick: () -> Unit = {},
     onEncuentranosClick: () -> Unit = {}
 ) {
-    // Una página del carrusel por cada categoría
     val categorias = Categoria.entries
 
     val estadoCarrusel = rememberPagerState(pageCount = { categorias.size })
 
-    // Cada 3 segundos pasa a la siguiente categoría. Al llegar a la última vuelve a la primera
     LaunchedEffect(Unit) {
         while (true) {
             delay(3000)
@@ -76,7 +73,6 @@ fun WelcomeScreen(
             .background(Fondo),
         contentAlignment = Alignment.Center
     ) {
-        // Círculos decorativos del fondo
         Box(
             modifier = Modifier
                 .offset(x = (-145).dp, y = (-310).dp)
@@ -99,8 +95,6 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // ---------- Arriba: versión y título ----------
-
             Etiqueta(texto = "Versión demo")
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -122,9 +116,6 @@ fun WelcomeScreen(
                 color = TextoSecundario
             )
 
-            // ---------- Medio: carrusel de categorías ----------
-
-            // weight(1f): el carrusel ocupa todo el espacio libre entre el título y el botón
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -141,7 +132,6 @@ fun WelcomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Puntos que indican en qué página va el carrusel
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     for (i in categorias.indices) {
                         Box(
@@ -155,8 +145,6 @@ fun WelcomeScreen(
                     }
                 }
             }
-
-            // ---------- Abajo: botón Ingresar ----------
 
             Button(
                 onClick = onIngresarClick,
@@ -178,7 +166,6 @@ fun WelcomeScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Botón que lleva al lector QR
             OutlinedButton(
                 onClick = onEncuentranosClick,
                 modifier = Modifier
@@ -211,7 +198,6 @@ fun WelcomeScreen(
     }
 }
 
-// Una página del carrusel: solo la imagen de la categoría (la misma de los productos)
 @Composable
 fun TarjetaCarrusel(categoria: Categoria) {
     Card(

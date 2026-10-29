@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import com.example.ArtesanApp.ui.theme.CelesteClaro
 import com.example.ArtesanApp.ui.theme.CelesteOscuro
 
-// Chip pequeño con fondo de color (ej: "Catálogo", "Cerámica", "Disponible")
 @Composable
 fun Etiqueta(
     texto: String,

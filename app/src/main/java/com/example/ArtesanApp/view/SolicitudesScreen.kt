@@ -47,7 +47,6 @@ import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 import com.example.ArtesanApp.navigation.Routes
 
-// Mis solicitudes: lista de las compras del cliente. Solo se ven, el cliente no puede cancelarlas
 @Composable
 fun SolicitudesScreen(
     navController: NavController,
@@ -80,7 +79,6 @@ fun SolicitudesScreen(
                 Text(text = "Aún no tienes solicitudes de compra.", color = TextoSecundario)
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    // reversed(): la más nueva arriba
                     items(solicitudes.reversed()) { solicitud ->
                         TarjetaSolicitud(
                             solicitud = solicitud,
@@ -93,7 +91,6 @@ fun SolicitudesScreen(
     }
 }
 
-// Tarjeta de una solicitud: imagen del primer producto, número, fecha, estado y total
 @Composable
 fun TarjetaSolicitud(
     solicitud: Solicitud,
@@ -111,7 +108,6 @@ fun TarjetaSolicitud(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Imagen del primer producto que se agregó al carro
             ImagenProducto(
                 categoria = solicitud.detalles.first().categoria,
                 tamanoIcono = 36.sp,

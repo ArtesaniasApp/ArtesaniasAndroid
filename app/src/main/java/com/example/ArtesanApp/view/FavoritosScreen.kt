@@ -31,7 +31,6 @@ import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import kotlinx.coroutines.launch
 import com.example.ArtesanApp.navigation.Routes
 
-// CU02: favoritos del usuario guardados en Room, del más reciente al más antiguo
 @Composable
 fun FavoritosScreen(
     navController: NavController,

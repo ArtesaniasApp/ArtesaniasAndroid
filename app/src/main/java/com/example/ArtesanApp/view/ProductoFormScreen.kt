@@ -45,7 +45,6 @@ import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.FiltroDesplegable
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 
-// CU06: formulario para crear (idProducto = 0) o editar un producto
 @Composable
 fun ProductoFormScreen(
     navController: NavController,
@@ -54,10 +53,8 @@ fun ProductoFormScreen(
 ) {
     val productos by productoViewModel.productos.collectAsState()
 
-    // Si es edición, busca el producto. Si es nuevo, queda en null
     val productoEditar = productos.find { it.id == idProducto }
 
-    // remember(productoEditar): cuando llega el producto desde Room, los campos se llenan con sus datos
     var nombre by remember(productoEditar) { mutableStateOf(productoEditar?.nombre ?: "") }
     var categoria by remember(productoEditar) { mutableStateOf(productoEditar?.categoria ?: Categoria.CERAMICA) }
     var material by remember(productoEditar) { mutableStateOf(productoEditar?.material ?: "") }
@@ -127,7 +124,6 @@ fun ProductoFormScreen(
                     val precioNumero = precio.toIntOrNull()
                     val stockNumero = stock.toIntOrNull()
 
-                    // Validaciones
                     if (nombre.isBlank() || material.isBlank() || descripcion.isBlank()) {
                         mensajeError = "Completa nombre, material y descripción."
                     } else if (precioNumero == null || precioNumero <= 0) {
@@ -175,7 +171,6 @@ fun ProductoFormScreen(
     }
 }
 
-// Campo de texto del formulario con su espacio debajo
 @Composable
 fun CampoTexto(
     valor: String,

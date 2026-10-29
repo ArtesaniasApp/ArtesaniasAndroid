@@ -46,17 +46,14 @@ import com.example.ArtesanApp.ui.theme.Rosado
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.viewmodel.RegistroViewModel
 
-// Pantalla de registro de clientes. Se abre desde el login y al terminar vuelve a él
 @Composable
 fun RegistroScreen(
     navController: NavController,
     registroViewModel: RegistroViewModel = viewModel()
 ) {
-    // Texto del aviso que se muestra al apretar "Registrarme" ("" = no mostrar aviso)
     var mensaje by remember { mutableStateOf("") }
     var registroExitoso by remember { mutableStateOf(false) }
 
-    // Fondo con los mismos círculos decorativos del login
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -77,7 +74,6 @@ fun RegistroScreen(
                 .background(Rosado, CircleShape)
         )
 
-        // Tarjeta principal con el formulario
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -211,7 +207,6 @@ fun RegistroScreen(
         }
     }
 
-    // Aviso de éxito o de error
     if (mensaje != "") {
         AlertDialog(
             onDismissRequest = { mensaje = "" },
@@ -225,7 +220,6 @@ fun RegistroScreen(
                 TextButton(
                     onClick = {
                         mensaje = ""
-                        // Si salió bien, vuelve a la pantalla de login
                         if (registroExitoso) {
                             navController.popBackStack()
                         }

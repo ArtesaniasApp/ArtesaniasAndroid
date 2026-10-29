@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.example.ArtesanApp.ui.theme.Rosado
 import com.example.ArtesanApp.ui.theme.RosadoFuerte
 
-// Corazón rosado: relleno si es favorito, solo borde si no lo es
 @Composable
 fun BotonFavorito(
     esFavorito: Boolean,

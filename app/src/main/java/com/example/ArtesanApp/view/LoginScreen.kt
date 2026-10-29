@@ -41,11 +41,10 @@ import androidx.compose.material3.TextButton
 import androidx.navigation.NavController
 import com.example.ArtesanApp.navigation.Routes
 
-
 @Composable
 fun LoginScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel = viewModel(), //Para usar la pantalla en cualquier lado con su controlador y su valor
+    loginViewModel: LoginViewModel = viewModel(),
     onLoginClick: (String, String) -> Unit = { _, _ -> }
 ) {
     var email by rememberSaveable {
@@ -60,7 +59,6 @@ fun LoginScreen(
         mutableStateOf(false)
     }
 
-    // Fondo de la pantalla
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +66,6 @@ fun LoginScreen(
         contentAlignment = Alignment.Center
     ) {
 
-        // Círculo celeste decorativo
         Box(
             modifier = Modifier
                 .offset(x = (-145).dp, y = (-310).dp)
@@ -79,7 +76,6 @@ fun LoginScreen(
                 )
         )
 
-        // Círculo rosado decorativo
         Box(
             modifier = Modifier
                 .offset(x = 180.dp, y = 330.dp)
@@ -90,7 +86,6 @@ fun LoginScreen(
                 )
         )
 
-        // Tarjeta principal
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -110,7 +105,6 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.Center
             ) {
 
-                // Nombre de la aplicación
                 Text(
                     text = "ArtesanApp",
                     fontSize = 30.sp,
@@ -132,7 +126,6 @@ fun LoginScreen(
                     modifier = Modifier.height(28.dp)
                 )
 
-                // Título del formulario
                 Text(
                     text = "Iniciar sesión",
                     fontSize = 23.sp,
@@ -144,10 +137,9 @@ fun LoginScreen(
                     modifier = Modifier.height(20.dp)
                 )
 
-                // Campo de email
                 OutlinedTextField(
                     value = loginViewModel.email,
-                    onValueChange = {loginViewModel.cambiarEmail(it)}, //It es el valor de la caja de texto
+                    onValueChange = {loginViewModel.cambiarEmail(it)},
                     label = {
                         Text("Correo electrónico") },
                     singleLine = true,
@@ -159,7 +151,6 @@ fun LoginScreen(
                     modifier = Modifier.height(16.dp)
                 )
 
-                // Campo de contraseña
                 OutlinedTextField(
                     value = loginViewModel.password,
                     onValueChange = {
@@ -177,14 +168,12 @@ fun LoginScreen(
                     modifier = Modifier.height(24.dp)
                 )
 
-                // Botón de inicio de sesión
                 Button(
                     onClick = {
                         val validador = loginViewModel.iniciarSesion()
 
                         if (validador) {
                             mostrarAlerta = false
-                            // Inicio de sesión correcto: AppNavigation decide a qué pantalla ir
                             onLoginClick(loginViewModel.email, loginViewModel.password)
                         } else {
                             mostrarAlerta = true
@@ -233,7 +222,6 @@ fun LoginScreen(
                     modifier = Modifier.height(12.dp)
                 )
 
-                // Botón para ir al registro. CircleShape redondea los extremos: queda con forma de óvalo
                 Button(
                     onClick = {
                         navController.navigate(Routes.REGISTRO)

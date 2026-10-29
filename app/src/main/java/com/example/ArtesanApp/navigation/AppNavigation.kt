@@ -28,22 +28,17 @@ import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 fun AppNavigation(
     navController: NavHostController = rememberNavController()
 ) {
-    // ViewModels de productos y favoritos creados una sola vez y compartidos por todas las pantallas.
-    // Así, al guardar y volver atrás, la operación en Room no se cancela.
     val productoViewModel: ProductoViewModel = viewModel()
     val favoritoViewModel: FavoritoViewModel = viewModel()
     val carritoViewModel: CarritoViewModel = viewModel()
     val solicitudViewModel: SolicitudViewModel = viewModel()
 
-    // Por ahora la app tiene un solo usuario y es el administrador.
-    // Cuando se conecte el backend, este valor saldrá del rol del usuario que inició sesión
     val esAdmin = true
 
     NavHost(
         navController = navController,
         startDestination = Routes.WELCOME
     ) {
-        // Pantalla de bienvenida
         composable(Routes.WELCOME) {
             WelcomeScreen(
                 onIngresarClick = {
@@ -55,20 +50,16 @@ fun AppNavigation(
             )
         }
 
-        // Lector de códigos QR (se abre desde la bienvenida, no necesita iniciar sesión)
         composable(Routes.QR) {
             QrScreen(
                 navController = navController
             )
         }
 
-        // Pantalla de inicio de sesión
         composable(Routes.LOGIN) {
             LoginScreen(
                 navController = navController,
                 onLoginClick = { correo, contrasena ->
-                    // Aquí conectaremos el inicio de sesión.
-                    // Según el rol: CLIENTE -> "catalogo", ADMIN -> "inventario"
                     navController.navigate(Routes.CATALOGO) {
                         popUpTo(Routes.WELCOME) { inclusive = true }
                     }
@@ -76,14 +67,12 @@ fun AppNavigation(
             )
         }
 
-        // Pantalla de registro de clientes (se abre desde el login)
         composable(Routes.REGISTRO) {
             RegistroScreen(
                 navController = navController
             )
         }
 
-        // ---------- Tienda del cliente ----------
         composable(Routes.CATALOGO) {
             CatalogoScreen(
                 navController = navController,
@@ -94,7 +83,6 @@ fun AppNavigation(
             )
         }
 
-        // {idProducto} es un parámetro de la ruta, ej: "detalle/3"
         composable("${Routes.DETALLE}/{idProducto}") { backStackEntry ->
             val idProducto = backStackEntry.arguments?.getString("idProducto")?.toLongOrNull() ?: 0
 
@@ -115,8 +103,6 @@ fun AppNavigation(
             )
         }
 
-        // ---------- Administración ----------
-
         composable(Routes.INVENTARIO) {
             InventarioScreen(
                 navController = navController,
@@ -124,7 +110,6 @@ fun AppNavigation(
             )
         }
 
-        // idProducto = 0 -> crear producto nuevo; otro número -> editar ese producto
         composable("${Routes.PRODUCTO_FORM}/{idProducto}") { backStackEntry ->
             val idProducto = backStackEntry.arguments?.getString("idProducto")?.toLongOrNull() ?: 0
 
@@ -143,7 +128,6 @@ fun AppNavigation(
             )
         }
 
-        // Resumen de la compra, IVA y método de pago (pago simulado, no descuenta stock)
         composable(Routes.CHECKOUT) {
             CheckoutScreen(
                 navController = navController,
@@ -160,7 +144,6 @@ fun AppNavigation(
             )
         }
 
-        // {numero} es el número de la solicitud, ej: "solicitud/2"
         composable("${Routes.SOLICITUD}/{numero}") { backStackEntry ->
             val numero = backStackEntry.arguments?.getString("numero")?.toIntOrNull() ?: 0
 

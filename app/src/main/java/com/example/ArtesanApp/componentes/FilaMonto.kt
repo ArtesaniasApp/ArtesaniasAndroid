@@ -10,7 +10,6 @@ import androidx.compose.ui.text.font.FontWeight
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 
-// Una fila con un texto a la izquierda y un monto a la derecha (ej: "IVA (19%)    $2.539")
 @Composable
 fun FilaMonto(texto: String, monto: String) {
     Row(

@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.sp
 import com.example.ArtesanApp.ui.theme.Marino
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 
-// Inicio de cada pantalla: chip + título en serif + subtítulo opcional
 @Composable
 fun Encabezado(
     etiqueta: String,

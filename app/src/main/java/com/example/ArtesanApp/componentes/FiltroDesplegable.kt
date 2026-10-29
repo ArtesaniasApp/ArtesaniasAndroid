@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 
-// Botón que al tocarlo despliega una lista de opciones (filtros del catálogo, categoría y estado del producto)
 @Composable
 fun FiltroDesplegable(
     opciones: List<String>,

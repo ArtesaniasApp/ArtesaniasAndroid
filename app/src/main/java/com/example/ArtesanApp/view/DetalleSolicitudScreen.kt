@@ -40,7 +40,6 @@ import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 import com.example.ArtesanApp.navigation.Routes
 
-// Detalle de una solicitud: lista simple de productos × cantidad (sin imágenes), total y método de pago
 @Composable
 fun DetalleSolicitudScreen(
     navController: NavController,
@@ -49,7 +48,6 @@ fun DetalleSolicitudScreen(
 ) {
     val solicitudes by solicitudViewModel.solicitudes.collectAsState()
 
-    // Busca la solicitud por su número
     val solicitud = solicitudes.find { it.numero == numeroSolicitud }
 
     Scaffold(
@@ -86,7 +84,6 @@ fun DetalleSolicitudScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Estado y fecha
             Row(verticalAlignment = Alignment.CenterVertically) {
                 EtiquetaEstado(estado = solicitud.estado)
                 Spacer(modifier = Modifier.width(10.dp))
@@ -97,7 +94,6 @@ fun DetalleSolicitudScreen(
 
             TarjetaConTitulo(titulo = "Productos") {
 
-                // Lista simple: "Nombre × cantidad" y el monto de esa línea
                 for (detalle in solicitud.detalles) {
                     FilaMonto(
                         texto = "${detalle.nombreProducto} × ${detalle.cantidad}",

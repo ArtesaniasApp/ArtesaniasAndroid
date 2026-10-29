@@ -11,8 +11,6 @@ import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.model.TipoUsuario
 import com.example.ArtesanApp.model.Usuario
 
-// Base de datos única de la app. Para agregar una tabla nueva: sumarla a "entities",
-// agregar su función abstracta del DAO y subir "version".
 @Database(
     entities = [Producto::class, Favorito::class, TipoUsuario::class, Usuario::class],
     version = 3,
@@ -33,7 +31,6 @@ abstract class AppDatabase: RoomDatabase() {
                     AppDatabase::class.java,
                     "db_artesanapp"
                 )
-                    // Si cambia la versión, borra y recrea las tablas (datos de prueba, no se pierde nada importante)
                     .fallbackToDestructiveMigration(true)
                     .build()
 

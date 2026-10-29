@@ -30,7 +30,6 @@ import com.example.ArtesanApp.ui.theme.CelesteClaro
 import com.example.ArtesanApp.ui.theme.Marino
 import com.example.ArtesanApp.ui.theme.Rosado
 
-// Barra de arriba de las pantallas: logo + nombre de la app
 @Composable
 fun BarraSuperior() {
     Column(
@@ -45,7 +44,6 @@ fun BarraSuperior() {
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Logo: paleta sobre degradado celeste -> rosado
             Box(
                 modifier = Modifier
                     .size(40.dp)

@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Marino
 
-// Tarjeta blanca con un título en serif arriba y lo que se le pase en "contenido" (checkout, detalle de solicitud)
 @Composable
 fun TarjetaConTitulo(
     titulo: String,

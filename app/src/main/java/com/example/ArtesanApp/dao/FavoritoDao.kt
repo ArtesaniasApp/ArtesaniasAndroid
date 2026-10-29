@@ -14,11 +14,9 @@ interface FavoritoDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun favoritoAlmacenar(favorito: Favorito)
 
-    // @Delete busca la fila por su clave primaria (usuarioId + productoId)
     @Delete
     suspend fun favoritoEliminar(favorito: Favorito)
 
-    // Une las tablas producto y favorito para obtener los productos guardados por un usuario
     @Query(
         "SELECT producto.* FROM producto " +
         "INNER JOIN favorito ON producto.id = favorito.productoId " +

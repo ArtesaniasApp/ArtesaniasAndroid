@@ -27,8 +27,6 @@ class CarritoViewModel : ViewModel() {
         return true
     }
 
-    // Agrega varias unidades de una vez (lo usa el detalle del producto).
-    // Devuelve false si con esa cantidad se pasa del stock disponible
     fun agregarCantidad(producto: Producto, cantidad: Int): Boolean {
         val cantidadActual = _carrito.value[producto.id] ?: 0
 

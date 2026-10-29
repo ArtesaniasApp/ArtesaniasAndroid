@@ -4,8 +4,6 @@ import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.Producto
 
-// Productos de prueba (los mismos que carga el backend en DatosIniciales.java).
-// Se insertan en Room la primera vez que se abre la app (ver ProductoViewModel).
 val productosIniciales = listOf(
     Producto(1, Categoria.CERAMICA, EstadoProducto.DISPONIBLE, "Taza de greda de Pomaire",
         "Taza artesanal moldeada a mano, ideal para café o té.", "Greda",

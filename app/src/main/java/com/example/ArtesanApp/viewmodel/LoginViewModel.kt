@@ -17,7 +17,6 @@ class LoginViewModel: ViewModel() {
         password = nuevaPassword
     }
 
-    // tipoUsuarioId = 2 -> ADMIN (ver tabla tipo_usuario)
     val usuarioRegistrado = Usuario(nombre = "victor", email = "@duoc.cl", password = "123", tipoUsuarioId = 2)
 
     fun iniciarSesion(): Boolean {

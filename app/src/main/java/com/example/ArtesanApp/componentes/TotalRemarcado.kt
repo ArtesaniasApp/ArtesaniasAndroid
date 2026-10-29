@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.sp
 import com.example.ArtesanApp.ui.theme.CelesteClaro
 import com.example.ArtesanApp.ui.theme.Marino
 
-// Total bien remarcado: fondo celeste claro, letra grande y en negrita
 @Composable
 fun TotalRemarcado(total: Int) {
     Row(

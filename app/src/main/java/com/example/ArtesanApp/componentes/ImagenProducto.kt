@@ -13,14 +13,12 @@ import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.ui.theme.CelesteClaro
 import com.example.ArtesanApp.ui.theme.Rosado
 
-// Imagen del producto. Mientras no se usen fotos reales, muestra un degradado con un ícono según la categoría
 @Composable
 fun ImagenProducto(
     categoria: Categoria,
     modifier: Modifier = Modifier,
     tamanoIcono: TextUnit = 56.sp
 ) {
-    // Al ser enum, el "when" obliga a cubrir todas las categorías (no necesita "else")
     val icono = when (categoria) {
         Categoria.CERAMICA -> "🏺"
         Categoria.TEXTIL -> "🧶"

@@ -66,7 +66,6 @@ import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import kotlinx.coroutines.launch
 import com.example.ArtesanApp.navigation.Routes
 
-// CU01: detalle de un producto. Desde aquí también se agrega al carro
 @Composable
 fun DetalleProductoScreen(
     navController: NavController,
@@ -86,7 +85,6 @@ fun DetalleProductoScreen(
     val productos by productoViewModel.productos.collectAsState()
     val favoritos by favoritoViewModel.favoritos.collectAsState()
 
-    // Busca el producto por su id dentro de la lista guardada en Room
     val producto = productos.find { it.id == idProducto }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -113,8 +111,6 @@ fun DetalleProductoScreen(
                 Text(text = "Volver al catálogo", color = TextoOscuro, fontWeight = FontWeight.Bold)
             }
 
-            // Mientras Room entrega la lista, el producto todavía es null.
-            // "return@Column" deja de dibujar el resto de la columna
             if (producto == null) {
                 Text(text = "Cargando producto...", color = TextoSecundario)
                 return@Column
@@ -140,7 +136,6 @@ fun DetalleProductoScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Nombre y corazón
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -175,7 +170,6 @@ fun DetalleProductoScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Mini tarjetas: material y disponibilidad
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
 
                 MiniTarjeta(
@@ -214,7 +208,6 @@ fun DetalleProductoScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Cantidad (solo números)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Cantidad", fontWeight = FontWeight.Bold, color = TextoOscuro)
 
@@ -249,7 +242,6 @@ fun DetalleProductoScreen(
                     } else if (cantidad > producto.stockDisponible) {
                         mensajeError = "Solo quedan ${producto.stockDisponible} unidades."
                     } else {
-                        // agregarCantidad revisa también lo que ya estaba en el carro
                         val agregado = carritoViewModel.agregarCantidad(producto, cantidad)
 
                         if (agregado) {
@@ -279,7 +271,6 @@ fun DetalleProductoScreen(
     }
 }
 
-// Tarjetita blanca con un título chico y un valor (Material / Disponibilidad)
 @Composable
 fun MiniTarjeta(
     titulo: String,

@@ -18,7 +18,6 @@ import com.example.ArtesanApp.ui.theme.CelesteOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.navigation.Routes
 
-// Barra de abajo del cliente. "rutaActual" indica qué ítem se ve seleccionado.
 @Composable
 fun BarraInferior(
     navController: NavController,
@@ -77,7 +76,6 @@ fun BarraInferior(
     }
 }
 
-// Navega sin apilar pantallas repetidas: vuelve hasta el catálogo y abre la ruta pedida
 private fun navegarA(navController: NavController, ruta: String) {
     navController.navigate(ruta) {
         popUpTo(Routes.CATALOGO)

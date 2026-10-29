@@ -31,8 +31,6 @@ import com.example.ArtesanApp.ui.theme.Rosado
 import com.example.ArtesanApp.ui.theme.TextoOscuro
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 
-// Tarjeta grande de un producto (catálogo y favoritos).
-// La gestión del inventario (stock, estado, editar) se hace en InventarioScreen
 @Composable
 fun ProductoCard(
     producto: Producto,
@@ -58,7 +56,6 @@ fun ProductoCard(
 
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // Chip de categoría y corazón
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -77,7 +74,6 @@ fun ProductoCard(
                         )
                     }
 
-                    // Solo el admin ve productos inactivos en el catálogo
                     if (producto.estado == EstadoProducto.INACTIVO) {
                         Spacer(modifier = Modifier.width(6.dp))
 
@@ -114,7 +110,6 @@ fun ProductoCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Material, precio y botón de detalle
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -148,7 +143,6 @@ fun ProductoCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Botón para agregar al carrito
             Button(
                 onClick = onCarritoClick,
                 modifier = Modifier.fillMaxWidth(),

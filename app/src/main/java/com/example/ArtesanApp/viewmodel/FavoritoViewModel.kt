@@ -16,7 +16,6 @@ class FavoritoViewModel(application: Application)
     : AndroidViewModel(application) {
     private val repository: FavoritoRepository
 
-    // Usuario de prueba fijo. Cuando el login comparta el usuario logueado, se reemplaza por su id
     private val usuarioId: Long = 1
 
     val favoritos: StateFlow<List<Producto>>
@@ -36,7 +35,6 @@ class FavoritoViewModel(application: Application)
         )
     }
 
-    // Si el producto ya es favorito lo quita; si no, lo agrega
     fun cambiarFavorito(producto: Producto, esFavorito: Boolean) {
 
         val favorito = Favorito(

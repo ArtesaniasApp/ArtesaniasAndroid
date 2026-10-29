@@ -53,7 +53,6 @@ import com.example.ArtesanApp.componentes.formatearPrecio
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import com.example.ArtesanApp.navigation.Routes
 
-// CU06: el administrador gestiona el inventario (stock, estado, crear y editar productos)
 @Composable
 fun InventarioScreen(
     navController: NavController,
@@ -82,7 +81,6 @@ fun InventarioScreen(
                 )
             }
 
-            // Crear producto: id 0 significa "producto nuevo"
             item {
                 Button(
                     onClick = {
@@ -130,7 +128,6 @@ fun InventarioScreen(
     }
 }
 
-// Tarjeta de un producto en el inventario
 @Composable
 fun InventarioItem(
     producto: Producto,
@@ -147,7 +144,6 @@ fun InventarioItem(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // Nombre, categoría y precio + botón editar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -175,7 +171,6 @@ fun InventarioItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Stock con botones - y +, y estado con lista desplegable
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -204,7 +199,6 @@ fun InventarioItem(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // Muestra los textos de los estados y devuelve el estado elegido
                 FiltroDesplegable(
                     opciones = EstadoProducto.entries.map { it.texto },
                     seleccionada = producto.estado.texto,

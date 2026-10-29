@@ -46,8 +46,6 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 
-// Lector QR (como lo enseñó el profesor): el escáner de Google abre su propia cámara
-// y devuelve el texto del código, que se guarda en el QrViewModel y se muestra en pantalla
 @Composable
 fun QrScreen(
     navController: NavController,
@@ -56,11 +54,9 @@ fun QrScreen(
 
     val context = LocalContext.current
 
-    // Texto del último QR leído ("" si aún no se lee ninguno)
     val contenidoQR by qrViewModel.contenidoQR
         .collectAsStateWithLifecycle()
 
-    // Solo se leen códigos QR (no códigos de barra)
     val opciones = remember {
         GmsBarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
@@ -95,7 +91,6 @@ fun QrScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Al tocar el botón se abre la cámara del escáner de Google
         Button(
             onClick = {
                 scanner.startScan()
@@ -106,7 +101,6 @@ fun QrScreen(
                         qrViewModel.guardarQR(contenido)
                     }
                     .addOnCanceledListener {
-                        // Escaneo cancelado
                     }
                     .addOnFailureListener { error ->
 
@@ -133,7 +127,6 @@ fun QrScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Resultado de la lectura
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),

@@ -58,8 +58,6 @@ import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 import kotlin.math.roundToInt
 import com.example.ArtesanApp.navigation.Routes
 
-// Checkout: resumen del carro con subtotal, IVA y total, y elección del método de pago.
-// El pago es simulado: al confirmar se crea una solicitud en memoria y NO se descuenta stock en Room
 @Composable
 fun CheckoutScreen(
     navController: NavController,
@@ -70,18 +68,14 @@ fun CheckoutScreen(
     val cantidades by carritoViewModel.carrito.collectAsState()
     val productos by productoViewModel.productos.collectAsState()
 
-    // Método elegido (null = todavía no elige ninguno)
     var metodoElegido by remember { mutableStateOf<MetodoPago?>(null) }
 
     var mostrarConfirmacion by remember { mutableStateOf(false) }
 
-    // Número de la solicitud recién creada (0 = todavía no se confirma la compra)
     var numeroSolicitud by remember { mutableStateOf(0) }
 
     val productosCarrito = productos.filter { cantidades.containsKey(it.id) }
 
-    // Los precios ya incluyen IVA (como en el comercio chileno):
-    // total = suma de precios; subtotal (neto) = total / 1,19; IVA = total - subtotal
     val total = productosCarrito.sumOf { producto ->
         producto.precioBase * (cantidades[producto.id] ?: 0)
     }
@@ -123,8 +117,6 @@ fun CheckoutScreen(
                 return@Column
             }
 
-            // ---------- Resumen de la compra ----------
-
             TarjetaConTitulo(titulo = "Resumen") {
 
                 for (producto in productosCarrito) {
@@ -152,8 +144,6 @@ fun CheckoutScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // ---------- Método de pago ----------
 
             TarjetaConTitulo(titulo = "Método de pago") {
 
@@ -198,7 +188,6 @@ fun CheckoutScreen(
         }
     }
 
-    // Pop up 1: pide confirmar la compra
     if (mostrarConfirmacion) {
         AlertDialog(
             onDismissRequest = { mostrarConfirmacion = false },
@@ -209,7 +198,6 @@ fun CheckoutScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        // Arma las líneas de la solicitud recorriendo el carro en el orden en que se agregaron
                         val detalles = mutableListOf<DetalleSolicitud>()
                         for ((idProducto, cantidad) in cantidades) {
                             val producto = productos.find { it.id == idProducto }
@@ -225,7 +213,6 @@ fun CheckoutScreen(
                             }
                         }
 
-                        // Pago simulado: se guarda la solicitud en memoria, no se descuenta stock en Room
                         numeroSolicitud = solicitudViewModel.agregarSolicitud(detalles, total, metodoElegido!!)
                         mostrarConfirmacion = false
                     }
@@ -241,7 +228,6 @@ fun CheckoutScreen(
         )
     }
 
-    // Pop up 2: solicitud creada. Al aceptar vacía el carro y abre "Mis solicitudes"
     if (numeroSolicitud != 0) {
         AlertDialog(
             onDismissRequest = { },

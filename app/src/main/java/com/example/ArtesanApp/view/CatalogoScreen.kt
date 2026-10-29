@@ -52,7 +52,6 @@ import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import kotlinx.coroutines.launch
 import com.example.ArtesanApp.navigation.Routes
 
-// CU01: el cliente explora el catálogo con buscador y 3 filtros
 @Composable
 fun CatalogoScreen(
     navController: NavController,
@@ -65,7 +64,6 @@ fun CatalogoScreen(
         mutableStateOf("")
     }
 
-    // null significa "Todas" las categorías
     var categoria by remember {
         mutableStateOf<Categoria?>(null)
     }
@@ -81,7 +79,6 @@ fun CatalogoScreen(
     val productos by productoViewModel.productos.collectAsState()
     val favoritos by favoritoViewModel.favoritos.collectAsState()
 
-    // Los materiales del filtro salen de los productos guardados (sin repetir)
     val materiales = listOf("Todos") + productos.map { it.material }.distinct().sorted()
 
     val productosFiltrados = productoViewModel.filtrarCatalogo(
@@ -93,7 +90,6 @@ fun CatalogoScreen(
         esAdmin = esAdmin
     )
 
-    // Aviso oscuro de abajo ("Añadido a favoritos")
     val snackbarHostState = remember { SnackbarHostState() }
     val alcance = rememberCoroutineScope()
 
@@ -119,7 +115,6 @@ fun CatalogoScreen(
                 )
             }
 
-            // Solo el admin ve este botón: abre el inventario (crear, editar, stock y estado)
             if (esAdmin) {
                 item {
                     OutlinedButton(
@@ -136,7 +131,6 @@ fun CatalogoScreen(
                 }
             }
 
-            // Buscador
             item {
                 OutlinedTextField(
                     value = textoBusqueda,
@@ -159,12 +153,9 @@ fun CatalogoScreen(
                 )
             }
 
-            // Filtros: categoría, material y orden
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
 
-                    // El filtro muestra textos; al elegir uno se busca la categoría con ese texto.
-                    // "Todas" no existe en el enum, por eso find devuelve null
                     FiltroDesplegable(
                         opciones = listOf("Todas") + Categoria.entries.map { it.texto },
                         seleccionada = categoria?.texto ?: "Todas",
@@ -192,7 +183,6 @@ fun CatalogoScreen(
                 }
             }
 
-            // productos.isNotEmpty(): no mostrar el aviso mientras Room todavía está cargando
             if (productos.isNotEmpty() && productosFiltrados.isEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
@@ -235,7 +225,6 @@ fun CatalogoScreen(
                         navController.navigate("${Routes.DETALLE}/${producto.id}")
                     },
                     onCarritoClick = {
-                        // Un producto inactivo (solo lo ve el admin) no se puede comprar
                         if (producto.estado == EstadoProducto.INACTIVO) {
                             alcance.launch {
                                 snackbarHostState.showSnackbar("Producto inactivo: no se puede agregar")

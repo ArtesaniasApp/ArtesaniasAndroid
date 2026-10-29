@@ -38,7 +38,6 @@ class ProductoViewModel(application: Application)
         cargarDatosIniciales()
     }
 
-    // Si la tabla está vacía (primera vez que se abre la app), guarda los productos de prueba
     private fun cargarDatosIniciales() {
 
         viewModelScope.launch {
@@ -62,7 +61,6 @@ class ProductoViewModel(application: Application)
         }
     }
 
-    // Suma o resta unidades al stock (cantidad = 1 o -1). El stock nunca baja de 0
     fun cambiarStock(producto: Producto, cantidad: Int) {
 
         val nuevoStock = producto.stockDisponible + cantidad
@@ -83,8 +81,6 @@ class ProductoViewModel(application: Application)
         actualizar(producto.copy(estado = nuevoEstado))
     }
 
-    // Control de stock: sin unidades queda AGOTADO y con unidades vuelve a DISPONIBLE.
-    // Un producto INACTIVO se mantiene inactivo hasta que el admin lo cambie.
     fun calcularEstado(estadoActual: EstadoProducto, stock: Int): EstadoProducto {
 
         if (estadoActual == EstadoProducto.INACTIVO) {
@@ -98,9 +94,6 @@ class ProductoViewModel(application: Application)
         return EstadoProducto.DISPONIBLE
     }
 
-    // Aplica el buscador y los 3 filtros del catálogo.
-    // Los productos INACTIVOS no se muestran al cliente, pero sí al admin (esAdmin = true).
-    // categoria = null significa "Todas"
     fun filtrarCatalogo(
         productos: List<Producto>,
         texto: String,

@@ -13,7 +13,6 @@ interface ProductoDao {
     @Insert
     suspend fun productoAlmacenar(producto: Producto)
 
-    // Se usa para cargar los productos iniciales. IGNORE: si el id ya existe, no lo vuelve a insertar
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun productosAlmacenarTodos(productos: List<Producto>)
 
