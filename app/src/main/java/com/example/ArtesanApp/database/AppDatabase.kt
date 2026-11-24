@@ -5,19 +5,14 @@ import androidx.room3.Database
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
 import com.example.ArtesanApp.dao.FavoritoDao
-import com.example.ArtesanApp.dao.ProductoDao
 import com.example.ArtesanApp.model.Favorito
-import com.example.ArtesanApp.model.Producto
-import com.example.ArtesanApp.model.TipoUsuario
-import com.example.ArtesanApp.model.Usuario
 
 @Database(
-    entities = [Producto::class, Favorito::class, TipoUsuario::class, Usuario::class],
-    version = 3,
+    entities = [Favorito::class],
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun productoDao(): ProductoDao
     abstract fun favoritoDao(): FavoritoDao
 
     companion object {

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoSecundario
 import com.example.ArtesanApp.componentes.BarraInferior
@@ -28,16 +29,23 @@ import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.ProductoCard
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
+import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import kotlinx.coroutines.launch
 import com.example.ArtesanApp.navigation.Routes
 
 @Composable
 fun FavoritosScreen(
     navController: NavController,
+    productoViewModel: ProductoViewModel = viewModel(),
     favoritoViewModel: FavoritoViewModel = viewModel(),
     carritoViewModel: CarritoViewModel = viewModel()
 ) {
+    val productos by productoViewModel.productos.collectAsState()
     val favoritos by favoritoViewModel.favoritos.collectAsState()
+
+    val productosFavoritos = favoritos
+        .mapNotNull { favorito -> productos.find { it.id == favorito.productoId } }
+        .filter { it.estado != EstadoProducto.INACTIVO }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val alcance = rememberCoroutineScope()
@@ -64,7 +72,7 @@ fun FavoritosScreen(
                 )
             }
 
-            if (favoritos.isEmpty()) {
+            if (productosFavoritos.isEmpty()) {
                 item {
                     Text(
                         text = "Aún no has guardado piezas favoritas.",
@@ -76,7 +84,7 @@ fun FavoritosScreen(
                 }
             } else {
                 items(
-                    items = favoritos,
+                    items = productosFavoritos,
                     key = { it.id }
                 ) { producto ->
 
@@ -99,12 +107,16 @@ fun FavoritosScreen(
                             navController.navigate("${Routes.DETALLE}/${producto.id}")
                         },
                         onCarritoClick = {
-                            carritoViewModel.agregar(producto)
+                            val agregado = carritoViewModel.agregar(producto)
+
+                            val mensaje = if (agregado) {
+                                "Añadido al carrito"
+                            } else {
+                                "Stock máximo alcanzado (${producto.stockDisponible} unidades)"
+                            }
 
                             alcance.launch {
-                                snackbarHostState.showSnackbar(
-                                    "Añadido al carrito"
-                                )
+                                snackbarHostState.showSnackbar(mensaje)
                             }
                         }
                     )

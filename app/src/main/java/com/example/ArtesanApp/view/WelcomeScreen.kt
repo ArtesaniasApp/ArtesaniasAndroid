@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ArtesanApp.componentes.Etiqueta
 import com.example.ArtesanApp.componentes.ImagenProducto
-import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Celeste
 import com.example.ArtesanApp.ui.theme.CelesteClaro
@@ -55,7 +54,7 @@ fun WelcomeScreen(
     onIngresarClick: () -> Unit = {},
     onEncuentranosClick: () -> Unit = {}
 ) {
-    val categorias = Categoria.entries
+    val categorias = listOf("Cerámica", "Textil", "Madera", "Joyería", "Cestería")
 
     val estadoCarrusel = rememberPagerState(pageCount = { categorias.size })
 
@@ -190,7 +189,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Acceso de demostración. No se guardan credenciales.",
+                text = "Inicia sesión para ver nuestro catálogo.",
                 fontSize = 13.sp,
                 color = TextoSecundario
             )
@@ -199,7 +198,7 @@ fun WelcomeScreen(
 }
 
 @Composable
-fun TarjetaCarrusel(categoria: Categoria) {
+fun TarjetaCarrusel(categoria: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),

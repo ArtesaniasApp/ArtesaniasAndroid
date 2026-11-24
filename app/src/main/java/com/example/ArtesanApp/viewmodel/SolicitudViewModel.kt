@@ -1,35 +1,86 @@
 package com.example.ArtesanApp.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.ArtesanApp.model.DetalleSolicitud
-import com.example.ArtesanApp.model.EstadoPedido
+import androidx.lifecycle.viewModelScope
+import com.example.ArtesanApp.dto.ItemPedidoRequest
+import com.example.ArtesanApp.dto.PedidoRequest
 import com.example.ArtesanApp.model.MetodoPago
 import com.example.ArtesanApp.model.Solicitud
+import com.example.ArtesanApp.remote.mensajeError
+import com.example.ArtesanApp.repository.SolicitudRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.launch
 
 class SolicitudViewModel : ViewModel() {
+    private val repository = SolicitudRepository()
 
     private val _solicitudes = MutableStateFlow<List<Solicitud>>(emptyList())
     val solicitudes: StateFlow<List<Solicitud>> = _solicitudes
 
-    fun agregarSolicitud(detalles: List<DetalleSolicitud>, total: Int, metodoPago: MetodoPago): Int {
-        val numero = _solicitudes.value.size + 1
-        val fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+    private val _metodosPago = MutableStateFlow<List<MetodoPago>>(emptyList())
+    val metodosPago: StateFlow<List<MetodoPago>> = _metodosPago
 
-        val nueva = Solicitud(
-            numero = numero,
-            fecha = fecha,
-            estado = EstadoPedido.PENDIENTE,
-            metodoPago = metodoPago,
-            total = total,
-            detalles = detalles
-        )
+    private val _cargando = MutableStateFlow(false)
+    val cargando: StateFlow<Boolean> = _cargando
 
-        _solicitudes.value = _solicitudes.value + nueva
+    private val _enviando = MutableStateFlow(false)
+    val enviando: StateFlow<Boolean> = _enviando
 
-        return numero
+    private val _mensaje = MutableStateFlow("")
+    val mensaje: StateFlow<String> = _mensaje
+
+    fun mensajeMostrado() {
+        _mensaje.value = ""
+    }
+
+    fun cargarSolicitudes() {
+
+        viewModelScope.launch {
+            _cargando.value = true
+            try {
+                _solicitudes.value = repository.listarMisPedidos()
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
+            }
+            _cargando.value = false
+        }
+    }
+
+    fun cargarMetodosPago() {
+
+        viewModelScope.launch {
+            try {
+                _metodosPago.value = repository.listarMetodosPago()
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
+            }
+        }
+    }
+
+    fun enviarSolicitud(
+        items: List<ItemPedidoRequest>,
+        metodoPago: MetodoPago,
+        onExito: (Solicitud) -> Unit
+    ) {
+
+        if (_enviando.value) {
+            return
+        }
+
+        viewModelScope.launch {
+            _enviando.value = true
+            try {
+                val solicitud = repository.crear(PedidoRequest(metodoPago.id, items))
+                onExito(solicitud)
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
+            }
+            _enviando.value = false
+        }
+    }
+
+    fun limpiar() {
+        _solicitudes.value = emptyList()
     }
 }

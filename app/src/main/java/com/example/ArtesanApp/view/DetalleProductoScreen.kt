@@ -116,13 +116,13 @@ fun DetalleProductoScreen(
                 return@Column
             }
 
-            val esFavorito = favoritos.any { it.id == producto.id }
+            val esFavorito = favoritos.any { it.productoId == producto.id }
             val hayStock = producto.estado == EstadoProducto.DISPONIBLE && producto.stockDisponible > 0
 
             Spacer(modifier = Modifier.height(8.dp))
 
             ImagenProducto(
-                categoria = producto.categoria,
+                categoria = producto.clasificacion,
                 tamanoIcono = 90.sp,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,7 +132,7 @@ fun DetalleProductoScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Etiqueta(texto = producto.categoria.texto)
+            Etiqueta(texto = producto.clasificacion)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -190,12 +190,12 @@ fun DetalleProductoScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(text = "Sobre el material", fontWeight = FontWeight.Bold, color = TextoOscuro)
-            Text(text = producto.descripcionMaterial, color = TextoSecundario)
+            Text(text = producto.descripcionMaterial ?: "", color = TextoSecundario)
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(text = "Detalle técnico", fontWeight = FontWeight.Bold, color = TextoOscuro)
-            Text(text = producto.descripcionTecnica, color = TextoSecundario)
+            Text(text = producto.descripcionTecnica ?: "", color = TextoSecundario)
 
             Spacer(modifier = Modifier.height(16.dp))
 

@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -23,19 +24,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.OrdenCatalogo
 import com.example.ArtesanApp.ui.theme.Fondo
@@ -58,14 +61,16 @@ fun CatalogoScreen(
     productoViewModel: ProductoViewModel = viewModel(),
     favoritoViewModel: FavoritoViewModel = viewModel(),
     carritoViewModel: CarritoViewModel = viewModel(),
-    esAdmin: Boolean = false
+    esAdmin: Boolean = false,
+    nombreUsuario: String = "",
+    onCerrarSesionClick: () -> Unit = {}
 ) {
     var textoBusqueda by remember {
         mutableStateOf("")
     }
 
     var categoria by remember {
-        mutableStateOf<Categoria?>(null)
+        mutableStateOf("Todas")
     }
 
     var material by remember {
@@ -77,6 +82,9 @@ fun CatalogoScreen(
     }
 
     val productos by productoViewModel.productos.collectAsState()
+    val clasificaciones by productoViewModel.clasificaciones.collectAsState()
+    val cargando by productoViewModel.cargando.collectAsState()
+    val mensajeServidor by productoViewModel.mensaje.collectAsState()
     val favoritos by favoritoViewModel.favoritos.collectAsState()
 
     val materiales = listOf("Todos") + productos.map { it.material }.distinct().sorted()
@@ -86,12 +94,22 @@ fun CatalogoScreen(
         texto = textoBusqueda,
         categoria = categoria,
         material = material,
-        orden = orden,
-        esAdmin = esAdmin
+        orden = orden
     )
 
     val snackbarHostState = remember { SnackbarHostState() }
     val alcance = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        productoViewModel.cargarProductos(esAdmin)
+    }
+
+    LaunchedEffect(mensajeServidor) {
+        if (mensajeServidor != "") {
+            snackbarHostState.showSnackbar(mensajeServidor)
+            productoViewModel.mensajeMostrado()
+        }
+    }
 
     Scaffold(
         topBar = { BarraSuperior() },
@@ -107,6 +125,20 @@ fun CatalogoScreen(
             contentPadding = PaddingValues(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Hola, $nombreUsuario", color = TextoSecundario)
+
+                    TextButton(onClick = onCerrarSesionClick) {
+                        Text(text = "Cerrar sesión", color = TextoOscuro)
+                    }
+                }
+            }
 
             item {
                 Encabezado(
@@ -157,11 +189,9 @@ fun CatalogoScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
 
                     FiltroDesplegable(
-                        opciones = listOf("Todas") + Categoria.entries.map { it.texto },
-                        seleccionada = categoria?.texto ?: "Todas",
-                        onSeleccionar = { texto ->
-                            categoria = Categoria.entries.find { it.texto == texto }
-                        },
+                        opciones = listOf("Todas") + clasificaciones.map { it.nombre },
+                        seleccionada = categoria,
+                        onSeleccionar = { categoria = it },
                         modifier = Modifier.weight(1f)
                     )
 
@@ -183,6 +213,21 @@ fun CatalogoScreen(
                 }
             }
 
+            if (cargando && productos.isEmpty()) {
+                item {
+                    CircularProgressIndicator()
+                }
+            }
+
+            if (!cargando && productos.isEmpty()) {
+                item {
+                    Text(text = "No hay productos para mostrar.", color = TextoSecundario)
+                    TextButton(onClick = { productoViewModel.cargarProductos(esAdmin) }) {
+                        Text(text = "Reintentar", color = TextoOscuro)
+                    }
+                }
+            }
+
             if (productos.isNotEmpty() && productosFiltrados.isEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
@@ -199,7 +244,7 @@ fun CatalogoScreen(
             ) { producto ->
 
                 val esFavorito = favoritos.any {
-                    it.id == producto.id
+                    it.productoId == producto.id
                 }
 
                 ProductoCard(

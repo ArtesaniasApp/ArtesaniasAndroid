@@ -133,7 +133,7 @@ private fun CarritoItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImagenProducto(
-            categoria = producto.categoria,
+            categoria = producto.clasificacion,
             modifier = Modifier
                 .width(100.dp)
                 .height(110.dp)

@@ -65,7 +65,11 @@ dependencies {
     // Íconos (corazón, carro, búsqueda...). La versión la define el BOM de Compose
     implementation(libs.androidx.compose.material.icons.extended)
 
-    // Room 3: base de datos local (productos y favoritos)
+    // Retrofit + Gson: conexión con el backend (API REST)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
+    // Room 3: base de datos local (favoritos)
     implementation(libs.androidx.room3.runtime)
     ksp(libs.androidx.room3.compiler)
 }

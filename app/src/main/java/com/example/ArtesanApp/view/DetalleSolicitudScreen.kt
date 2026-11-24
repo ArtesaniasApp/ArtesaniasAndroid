@@ -32,6 +32,8 @@ import com.example.ArtesanApp.componentes.EtiquetaEstado
 import com.example.ArtesanApp.componentes.FilaMonto
 import com.example.ArtesanApp.componentes.TarjetaConTitulo
 import com.example.ArtesanApp.componentes.TotalRemarcado
+import com.example.ArtesanApp.componentes.formatearFecha
+import com.example.ArtesanApp.componentes.formatearMetodoPago
 import com.example.ArtesanApp.componentes.formatearPrecio
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Fondo
@@ -43,12 +45,12 @@ import com.example.ArtesanApp.navigation.Routes
 @Composable
 fun DetalleSolicitudScreen(
     navController: NavController,
-    numeroSolicitud: Int,
+    idSolicitud: Long,
     solicitudViewModel: SolicitudViewModel = viewModel()
 ) {
     val solicitudes by solicitudViewModel.solicitudes.collectAsState()
 
-    val solicitud = solicitudes.find { it.numero == numeroSolicitud }
+    val solicitud = solicitudes.find { it.id == idSolicitud }
 
     Scaffold(
         topBar = { BarraSuperior() },
@@ -78,7 +80,7 @@ fun DetalleSolicitudScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Encabezado(
-                etiqueta = "Solicitud N° ${solicitud.numero}",
+                etiqueta = "Solicitud N° ${solicitud.id}",
                 titulo = "Detalle de la solicitud"
             )
 
@@ -87,7 +89,7 @@ fun DetalleSolicitudScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 EtiquetaEstado(estado = solicitud.estado)
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = solicitud.fecha, color = TextoSecundario)
+                Text(text = formatearFecha(solicitud.fecha), color = TextoSecundario)
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -96,8 +98,8 @@ fun DetalleSolicitudScreen(
 
                 for (detalle in solicitud.detalles) {
                     FilaMonto(
-                        texto = "${detalle.nombreProducto} × ${detalle.cantidad}",
-                        monto = formatearPrecio(detalle.precioUnitario * detalle.cantidad)
+                        texto = "${detalle.productoNombre} × ${detalle.cantidad}",
+                        monto = formatearPrecio(detalle.subtotal)
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -105,7 +107,7 @@ fun DetalleSolicitudScreen(
 
                 HorizontalDivider(color = Borde, modifier = Modifier.padding(vertical = 8.dp))
 
-                FilaMonto(texto = "Método de pago", monto = solicitud.metodoPago.texto)
+                FilaMonto(texto = "Método de pago", monto = formatearMetodoPago(solicitud.metodoPago))
 
                 Spacer(modifier = Modifier.height(16.dp))
 

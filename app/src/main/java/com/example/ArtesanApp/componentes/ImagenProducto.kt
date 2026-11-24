@@ -9,22 +9,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.example.ArtesanApp.model.Categoria
 import com.example.ArtesanApp.ui.theme.CelesteClaro
 import com.example.ArtesanApp.ui.theme.Rosado
 
 @Composable
 fun ImagenProducto(
-    categoria: Categoria,
+    categoria: String,
     modifier: Modifier = Modifier,
     tamanoIcono: TextUnit = 56.sp
 ) {
     val icono = when (categoria) {
-        Categoria.CERAMICA -> "🏺"
-        Categoria.TEXTIL -> "🧶"
-        Categoria.MADERA -> "🪵"
-        Categoria.JOYERIA -> "💍"
-        Categoria.CESTERIA -> "🧺"
+        "Cerámica" -> "🏺"
+        "Textil" -> "🧶"
+        "Madera" -> "🪵"
+        "Joyería" -> "💍"
+        "Cestería" -> "🧺"
+        else -> "🎁"
     }
 
     Box(

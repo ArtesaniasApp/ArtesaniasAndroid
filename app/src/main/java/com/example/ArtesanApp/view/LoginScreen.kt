@@ -22,11 +22,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +32,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ArtesanApp.model.Usuario
 import com.example.ArtesanApp.viewmodel.LoginViewModel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
@@ -45,19 +43,10 @@ import com.example.ArtesanApp.navigation.Routes
 fun LoginScreen(
     navController: NavController,
     loginViewModel: LoginViewModel = viewModel(),
-    onLoginClick: (String, String) -> Unit = { _, _ -> }
+    onLoginExitoso: (Usuario) -> Unit = {}
 ) {
-    var email by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var password by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var mostrarAlerta by remember {
-        mutableStateOf(false)
-    }
+    val cargando by loginViewModel.cargando.collectAsState()
+    val mensaje by loginViewModel.mensaje.collectAsState()
 
     Box(
         modifier = Modifier
@@ -170,15 +159,9 @@ fun LoginScreen(
 
                 Button(
                     onClick = {
-                        val validador = loginViewModel.iniciarSesion()
-
-                        if (validador) {
-                            mostrarAlerta = false
-                            onLoginClick(loginViewModel.email, loginViewModel.password)
-                        } else {
-                            mostrarAlerta = true
-                        }
+                        loginViewModel.iniciarSesion(onExito = onLoginExitoso)
                     },
+                    enabled = !cargando,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -189,25 +172,25 @@ fun LoginScreen(
                     )
                 ) {
                     Text(
-                        text = "Ingresar",
+                        text = if (cargando) "Ingresando..." else "Ingresar",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    if (mostrarAlerta) {
+                    if (mensaje != "") {
                         AlertDialog(
                             onDismissRequest = {
-                                mostrarAlerta = false
+                                loginViewModel.mensajeMostrado()
                             },
                             title = {
                                 Text("Error")
                             },
                             text = {
-                                Text("El correo o la contraseña son incorrectos.")
+                                Text(mensaje)
                             },
                             confirmButton = {
                                 TextButton(
                                     onClick = {
-                                        mostrarAlerta = false
+                                        loginViewModel.mensajeMostrado()
                                     }
                                 ) {
                                     Text("Aceptar")

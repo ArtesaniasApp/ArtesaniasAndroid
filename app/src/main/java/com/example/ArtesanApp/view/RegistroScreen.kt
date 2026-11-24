@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,8 @@ fun RegistroScreen(
 ) {
     var mensaje by remember { mutableStateOf("") }
     var registroExitoso by remember { mutableStateOf(false) }
+
+    val cargando by registroViewModel.cargando.collectAsState()
 
     Box(
         modifier = Modifier
@@ -169,16 +172,18 @@ fun RegistroScreen(
 
                 Button(
                     onClick = {
-                        val error = registroViewModel.validarRegistro()
-
-                        if (error == "") {
-                            registroExitoso = true
-                            mensaje = "Tu cuenta fue creada con éxito. Ya puedes iniciar sesión."
-                        } else {
-                            registroExitoso = false
-                            mensaje = error
-                        }
+                        registroViewModel.registrar(
+                            onExito = {
+                                registroExitoso = true
+                                mensaje = "Tu cuenta fue creada con éxito. Ya puedes iniciar sesión."
+                            },
+                            onError = { error ->
+                                registroExitoso = false
+                                mensaje = error
+                            }
+                        )
                     },
+                    enabled = !cargando,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -189,7 +194,7 @@ fun RegistroScreen(
                     )
                 ) {
                     Text(
-                        text = "Registrarme",
+                        text = if (cargando) "Registrando..." else "Registrarme",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
