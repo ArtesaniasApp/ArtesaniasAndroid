@@ -12,11 +12,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ArtesanApp.view.CarritoScreen
 import com.example.ArtesanApp.view.CatalogoScreen
 import com.example.ArtesanApp.view.CheckoutScreen
+import com.example.ArtesanApp.view.DetallePedidoAdminScreen
 import com.example.ArtesanApp.view.DetalleProductoScreen
 import com.example.ArtesanApp.view.DetalleSolicitudScreen
 import com.example.ArtesanApp.view.FavoritosScreen
 import com.example.ArtesanApp.view.InventarioScreen
 import com.example.ArtesanApp.view.LoginScreen
+import com.example.ArtesanApp.view.PedidosAdminScreen
 import com.example.ArtesanApp.view.ProductoFormScreen
 import com.example.ArtesanApp.view.QrScreen
 import com.example.ArtesanApp.view.RegistroScreen
@@ -25,6 +27,7 @@ import com.example.ArtesanApp.view.WelcomeScreen
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
 import com.example.ArtesanApp.viewmodel.LoginViewModel
+import com.example.ArtesanApp.viewmodel.PedidosAdminViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 
@@ -37,6 +40,7 @@ fun AppNavigation(
     val favoritoViewModel: FavoritoViewModel = viewModel()
     val carritoViewModel: CarritoViewModel = viewModel()
     val solicitudViewModel: SolicitudViewModel = viewModel()
+    val pedidosAdminViewModel: PedidosAdminViewModel = viewModel()
 
     val usuario by loginViewModel.usuario.collectAsState()
 
@@ -96,6 +100,7 @@ fun AppNavigation(
                     productoViewModel.limpiar()
                     carritoViewModel.vaciar()
                     solicitudViewModel.limpiar()
+                    pedidosAdminViewModel.limpiar()
 
                     navController.navigate(Routes.WELCOME) {
                         popUpTo(0)
@@ -139,6 +144,23 @@ fun AppNavigation(
                 navController = navController,
                 idProducto = idProducto,
                 productoViewModel = productoViewModel
+            )
+        }
+
+        composable(Routes.PEDIDOS_ADMIN) {
+            PedidosAdminScreen(
+                navController = navController,
+                pedidosAdminViewModel = pedidosAdminViewModel
+            )
+        }
+
+        composable("${Routes.PEDIDO_ADMIN}/{idPedido}") { backStackEntry ->
+            val idPedido = backStackEntry.arguments?.getString("idPedido")?.toLongOrNull() ?: 0
+
+            DetallePedidoAdminScreen(
+                navController = navController,
+                idPedido = idPedido,
+                pedidosAdminViewModel = pedidosAdminViewModel
             )
         }
 

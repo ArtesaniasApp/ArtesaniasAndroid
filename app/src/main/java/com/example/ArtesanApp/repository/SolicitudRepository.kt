@@ -1,6 +1,8 @@
 package com.example.ArtesanApp.repository
 
+import com.example.ArtesanApp.dto.EstadoRequest
 import com.example.ArtesanApp.dto.PedidoRequest
+import com.example.ArtesanApp.model.Estado
 import com.example.ArtesanApp.model.MetodoPago
 import com.example.ArtesanApp.model.Solicitud
 import com.example.ArtesanApp.remote.PedidoApi
@@ -19,5 +21,17 @@ class SolicitudRepository(
 
     suspend fun listarMisPedidos(): List<Solicitud> {
         return api.listarMisPedidos()
+    }
+
+    suspend fun listarEstados(): List<Estado> {
+        return api.listarEstados()
+    }
+
+    suspend fun listarTodos(): List<Solicitud> {
+        return api.listarTodos()
+    }
+
+    suspend fun cambiarEstado(id: Long, estadoId: Long): Solicitud {
+        return api.cambiarEstado(id, EstadoRequest(estadoId))
     }
 }

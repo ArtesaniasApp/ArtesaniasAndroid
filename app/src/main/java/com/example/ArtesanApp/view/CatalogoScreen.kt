@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.LocalShipping
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -149,16 +150,31 @@ fun CatalogoScreen(
 
             if (esAdmin) {
                 item {
-                    OutlinedButton(
-                        onClick = {
-                            navController.navigate(Routes.INVENTARIO)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Outlined.Inventory2, contentDescription = null, tint = TextoOscuro)
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Inventario", color = TextoOscuro)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                        OutlinedButton(
+                            onClick = {
+                                navController.navigate(Routes.INVENTARIO)
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Outlined.Inventory2, contentDescription = null, tint = TextoOscuro)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(text = "Inventario", color = TextoOscuro)
+                        }
+
+                        OutlinedButton(
+                            onClick = {
+                                navController.navigate(Routes.PEDIDOS_ADMIN)
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Outlined.LocalShipping, contentDescription = null, tint = TextoOscuro)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(text = "Pedidos", color = TextoOscuro)
+                        }
                     }
                 }
             }
