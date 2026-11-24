@@ -39,6 +39,9 @@ replay_pid*
 build/
 **/build/
 
+# APK generado para la entrega
+/app/release/
+
 # Archivos nativos
 .externalNativeBuild/
 .cxx/
