@@ -16,4 +16,6 @@ object Routes {
 
     const val INVENTARIO = "inventario"
     const val PRODUCTO_FORM = "producto_form"
+    const val PEDIDOS_ADMIN = "pedidos_admin"
+    const val PEDIDO_ADMIN = "pedido_admin"
 }

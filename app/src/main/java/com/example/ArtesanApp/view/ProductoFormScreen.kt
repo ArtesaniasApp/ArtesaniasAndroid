@@ -34,9 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.ArtesanApp.model.Categoria
-import com.example.ArtesanApp.model.EstadoProducto
-import com.example.ArtesanApp.model.Producto
+import com.example.ArtesanApp.dto.ProductoRequest
 import com.example.ArtesanApp.ui.theme.Celeste
 import com.example.ArtesanApp.ui.theme.Fondo
 import com.example.ArtesanApp.ui.theme.TextoOscuro
@@ -52,11 +50,14 @@ fun ProductoFormScreen(
     productoViewModel: ProductoViewModel = viewModel()
 ) {
     val productos by productoViewModel.productos.collectAsState()
+    val clasificaciones by productoViewModel.clasificaciones.collectAsState()
+    val guardando by productoViewModel.guardando.collectAsState()
+    val mensajeServidor by productoViewModel.mensaje.collectAsState()
 
     val productoEditar = productos.find { it.id == idProducto }
 
     var nombre by remember(productoEditar) { mutableStateOf(productoEditar?.nombre ?: "") }
-    var categoria by remember(productoEditar) { mutableStateOf(productoEditar?.categoria ?: Categoria.CERAMICA) }
+    var categoria by remember(productoEditar) { mutableStateOf(productoEditar?.clasificacion ?: "") }
     var material by remember(productoEditar) { mutableStateOf(productoEditar?.material ?: "") }
     var descripcion by remember(productoEditar) { mutableStateOf(productoEditar?.descripcion ?: "") }
     var descripcionMaterial by remember(productoEditar) { mutableStateOf(productoEditar?.descripcionMaterial ?: "") }
@@ -98,11 +99,9 @@ fun ProductoFormScreen(
 
             Text(text = "Categoría", color = TextoOscuro, fontWeight = FontWeight.Bold)
             FiltroDesplegable(
-                opciones = Categoria.entries.map { it.texto },
-                seleccionada = categoria.texto,
-                onSeleccionar = { texto ->
-                    categoria = Categoria.entries.first { it.texto == texto }
-                },
+                opciones = clasificaciones.map { it.nombre },
+                seleccionada = categoria.ifBlank { "Elige una categoría" },
+                onSeleccionar = { categoria = it },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -119,43 +118,58 @@ fun ProductoFormScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
+            if (mensajeServidor.isNotBlank()) {
+                Text(text = mensajeServidor, color = Color.Red, fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
             Button(
                 onClick = {
                     val precioNumero = precio.toIntOrNull()
                     val stockNumero = stock.toIntOrNull()
+                    val clasificacion = clasificaciones.find { it.nombre == categoria }
+
+                    productoViewModel.mensajeMostrado()
 
                     if (nombre.isBlank() || material.isBlank() || descripcion.isBlank()) {
                         mensajeError = "Completa nombre, material y descripción."
+                    } else if (clasificacion == null) {
+                        mensajeError = "Elige una categoría."
                     } else if (precioNumero == null || precioNumero <= 0) {
                         mensajeError = "El precio debe ser un número mayor a 0."
                     } else if (stockNumero == null || stockNumero < 0) {
                         mensajeError = "El stock debe ser un número igual o mayor a 0."
                     } else {
 
-                        val estadoActual = productoEditar?.estado ?: EstadoProducto.DISPONIBLE
+                        mensajeError = ""
 
-                        val producto = Producto(
-                            id = productoEditar?.id ?: 0,
-                            categoria = categoria,
-                            estado = productoViewModel.calcularEstado(estadoActual, stockNumero),
+                        val datos = ProductoRequest(
+                            clasificacionId = clasificacion.id,
                             nombre = nombre,
                             descripcion = descripcion,
                             material = material,
                             descripcionMaterial = descripcionMaterial,
                             descripcionTecnica = descripcionTecnica,
                             precioBase = precioNumero,
-                            stockDisponible = stockNumero
+                            stockDisponible = stockNumero,
+                            imagenUrl = productoEditar?.imagenUrl ?: ""
                         )
 
                         if (productoEditar == null) {
-                            productoViewModel.insertar(producto)
+                            productoViewModel.insertar(
+                                datos = datos,
+                                onExito = { navController.popBackStack() }
+                            )
                         } else {
-                            productoViewModel.actualizar(producto)
+                            productoViewModel.actualizar(
+                                id = productoEditar.id,
+                                datos = datos,
+                                onExito = { navController.popBackStack() }
+                            )
                         }
-
-                        navController.popBackStack()
                     }
                 },
+                enabled = !guardando,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),

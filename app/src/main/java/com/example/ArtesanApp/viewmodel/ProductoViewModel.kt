@@ -1,63 +1,89 @@
 package com.example.ArtesanApp.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ArtesanApp.database.AppDatabase
-import com.example.ArtesanApp.database.productosIniciales
-import com.example.ArtesanApp.model.Categoria
+import com.example.ArtesanApp.dto.ProductoRequest
+import com.example.ArtesanApp.model.Clasificacion
+import com.example.ArtesanApp.model.Estado
 import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.OrdenCatalogo
 import com.example.ArtesanApp.model.Producto
+import com.example.ArtesanApp.remote.mensajeError
 import com.example.ArtesanApp.repository.ProductoRepository
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ProductoViewModel(application: Application)
-    : AndroidViewModel(application) {
-    private val repository: ProductoRepository
+class ProductoViewModel : ViewModel() {
+    private val repository = ProductoRepository()
 
-    val productos: StateFlow<List<Producto>>
+    private val _productos = MutableStateFlow<List<Producto>>(emptyList())
+    val productos: StateFlow<List<Producto>> = _productos
 
-    init {
+    private val _clasificaciones = MutableStateFlow<List<Clasificacion>>(emptyList())
+    val clasificaciones: StateFlow<List<Clasificacion>> = _clasificaciones
 
-        val productoDao = AppDatabase
-            .getDatabase(application)
-            .productoDao()
+    private val _estados = MutableStateFlow<List<Estado>>(emptyList())
 
-        repository = ProductoRepository(productoDao)
+    private val _cargando = MutableStateFlow(false)
+    val cargando: StateFlow<Boolean> = _cargando
 
-        productos = repository.productos.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    private val _guardando = MutableStateFlow(false)
+    val guardando: StateFlow<Boolean> = _guardando
 
-        cargarDatosIniciales()
+    private val _mensaje = MutableStateFlow("")
+    val mensaje: StateFlow<String> = _mensaje
+
+    fun mensajeMostrado() {
+        _mensaje.value = ""
     }
 
-    private fun cargarDatosIniciales() {
+    fun cargarProductos(esAdmin: Boolean) {
 
         viewModelScope.launch {
-            if (repository.productosContar() == 0) {
-                repository.productosAlmacenarTodos(productosIniciales)
+            _cargando.value = true
+            try {
+                if (esAdmin) {
+                    _productos.value = repository.listarInventario()
+                } else {
+                    _productos.value = repository.listarCatalogo()
+                }
+
+                _clasificaciones.value = repository.listarClasificaciones()
+                _estados.value = repository.listarEstados()
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
             }
+            _cargando.value = false
         }
     }
 
-    fun insertar(producto: Producto) {
+    fun insertar(datos: ProductoRequest, onExito: () -> Unit) {
 
         viewModelScope.launch {
-            repository.productoAlmacenar(producto)
+            _guardando.value = true
+            try {
+                val creado = repository.crear(datos)
+                _productos.value = _productos.value + creado
+                onExito()
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
+            }
+            _guardando.value = false
         }
     }
 
-    fun actualizar(producto: Producto) {
+    fun actualizar(id: Long, datos: ProductoRequest, onExito: () -> Unit) {
 
         viewModelScope.launch {
-            repository.productoActualizar(producto)
+            _guardando.value = true
+            try {
+                reemplazar(repository.actualizar(id, datos))
+                onExito()
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
+            }
+            _guardando.value = false
         }
     }
 
@@ -65,49 +91,59 @@ class ProductoViewModel(application: Application)
 
         val nuevoStock = producto.stockDisponible + cantidad
 
-        if (nuevoStock < 0) {
+        if (nuevoStock < 0 || _guardando.value) {
             return
         }
 
-        actualizar(
-            producto.copy(
-                stockDisponible = nuevoStock,
-                estado = calcularEstado(producto.estado, nuevoStock)
-            )
-        )
+        viewModelScope.launch {
+            _guardando.value = true
+            try {
+                reemplazar(repository.cambiarStock(producto.id, nuevoStock))
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
+            }
+            _guardando.value = false
+        }
     }
 
     fun cambiarEstado(producto: Producto, nuevoEstado: EstadoProducto) {
-        actualizar(producto.copy(estado = nuevoEstado))
+
+        val estado = _estados.value.find { it.nombre == nuevoEstado.name }
+
+        if (estado == null || _guardando.value) {
+            return
+        }
+
+        viewModelScope.launch {
+            _guardando.value = true
+            try {
+                reemplazar(repository.cambiarEstado(producto.id, estado.id))
+            } catch (e: Exception) {
+                _mensaje.value = mensajeError(e)
+            }
+            _guardando.value = false
+        }
     }
 
-    fun calcularEstado(estadoActual: EstadoProducto, stock: Int): EstadoProducto {
-
-        if (estadoActual == EstadoProducto.INACTIVO) {
-            return EstadoProducto.INACTIVO
+    private fun reemplazar(actualizado: Producto) {
+        _productos.value = _productos.value.map {
+            if (it.id == actualizado.id) actualizado else it
         }
+    }
 
-        if (stock == 0) {
-            return EstadoProducto.AGOTADO
-        }
-
-        return EstadoProducto.DISPONIBLE
+    fun limpiar() {
+        _productos.value = emptyList()
     }
 
     fun filtrarCatalogo(
         productos: List<Producto>,
         texto: String,
-        categoria: Categoria?,
+        categoria: String,
         material: String,
-        orden: OrdenCatalogo,
-        esAdmin: Boolean
+        orden: OrdenCatalogo
     ): List<Producto> {
 
         var resultado = productos
-
-        if (!esAdmin) {
-            resultado = resultado.filter { it.estado != EstadoProducto.INACTIVO }
-        }
 
         if (texto.isNotBlank()) {
             resultado = resultado.filter {
@@ -116,8 +152,8 @@ class ProductoViewModel(application: Application)
             }
         }
 
-        if (categoria != null) {
-            resultado = resultado.filter { it.categoria == categoria }
+        if (categoria != "Todas") {
+            resultado = resultado.filter { it.clasificacion == categoria }
         }
 
         if (material != "Todos") {

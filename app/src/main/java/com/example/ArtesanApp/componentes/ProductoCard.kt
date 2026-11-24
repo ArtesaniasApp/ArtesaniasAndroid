@@ -48,7 +48,7 @@ fun ProductoCard(
         border = BorderStroke(1.dp, Borde)
     ) {
         ImagenProducto(
-            categoria = producto.categoria,
+            categoria = producto.clasificacion,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(160.dp)
@@ -62,7 +62,7 @@ fun ProductoCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row {
-                    Etiqueta(texto = producto.categoria.texto)
+                    Etiqueta(texto = producto.clasificacion)
 
                     if (producto.estado == EstadoProducto.AGOTADO) {
                         Spacer(modifier = Modifier.width(6.dp))

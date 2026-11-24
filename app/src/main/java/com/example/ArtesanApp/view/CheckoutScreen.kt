@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,8 +45,9 @@ import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.FilaMonto
 import com.example.ArtesanApp.componentes.TarjetaConTitulo
 import com.example.ArtesanApp.componentes.TotalRemarcado
+import com.example.ArtesanApp.componentes.formatearMetodoPago
 import com.example.ArtesanApp.componentes.formatearPrecio
-import com.example.ArtesanApp.model.DetalleSolicitud
+import com.example.ArtesanApp.dto.ItemPedidoRequest
 import com.example.ArtesanApp.model.MetodoPago
 import com.example.ArtesanApp.ui.theme.Borde
 import com.example.ArtesanApp.ui.theme.Celeste
@@ -67,12 +69,19 @@ fun CheckoutScreen(
 ) {
     val cantidades by carritoViewModel.carrito.collectAsState()
     val productos by productoViewModel.productos.collectAsState()
+    val metodosPago by solicitudViewModel.metodosPago.collectAsState()
+    val enviando by solicitudViewModel.enviando.collectAsState()
+    val mensajeServidor by solicitudViewModel.mensaje.collectAsState()
 
     var metodoElegido by remember { mutableStateOf<MetodoPago?>(null) }
 
     var mostrarConfirmacion by remember { mutableStateOf(false) }
 
-    var numeroSolicitud by remember { mutableStateOf(0) }
+    var numeroSolicitud by remember { mutableStateOf(0L) }
+
+    LaunchedEffect(Unit) {
+        solicitudViewModel.cargarMetodosPago()
+    }
 
     val productosCarrito = productos.filter { cantidades.containsKey(it.id) }
 
@@ -147,7 +156,7 @@ fun CheckoutScreen(
 
             TarjetaConTitulo(titulo = "Método de pago") {
 
-                for (metodo in MetodoPago.entries) {
+                for (metodo in metodosPago) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -159,7 +168,7 @@ fun CheckoutScreen(
                             onClick = { metodoElegido = metodo },
                             colors = RadioButtonDefaults.colors(selectedColor = Celeste)
                         )
-                        Text(text = metodo.texto, color = TextoOscuro)
+                        Text(text = formatearMetodoPago(metodo.nombre), color = TextoOscuro)
                     }
                 }
             }
@@ -168,7 +177,7 @@ fun CheckoutScreen(
 
             Button(
                 onClick = { mostrarConfirmacion = true },
-                enabled = metodoElegido != null,
+                enabled = metodoElegido != null && !enviando,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -178,7 +187,7 @@ fun CheckoutScreen(
                     contentColor = Color.White
                 )
             ) {
-                Text(text = "Pagar ${formatearPrecio(total)}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(text = if (enviando) "Enviando..." else "Pagar ${formatearPrecio(total)}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
 
             if (metodoElegido == null) {
@@ -193,27 +202,26 @@ fun CheckoutScreen(
             onDismissRequest = { mostrarConfirmacion = false },
             title = { Text("Confirmar compra") },
             text = {
-                Text("Vas a pagar ${formatearPrecio(total)} con ${metodoElegido?.texto}. ¿Confirmas la compra?")
+                Text("Vas a pagar ${formatearPrecio(total)} con ${formatearMetodoPago(metodoElegido?.nombre ?: "")}. ¿Confirmas la compra?")
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val detalles = mutableListOf<DetalleSolicitud>()
-                        for ((idProducto, cantidad) in cantidades) {
-                            val producto = productos.find { it.id == idProducto }
-                            if (producto != null) {
-                                detalles.add(
-                                    DetalleSolicitud(
-                                        nombreProducto = producto.nombre,
-                                        categoria = producto.categoria,
-                                        cantidad = cantidad,
-                                        precioUnitario = producto.precioBase
-                                    )
-                                )
-                            }
+                        val items = productosCarrito.map { producto ->
+                            ItemPedidoRequest(
+                                productoId = producto.id,
+                                cantidad = cantidades[producto.id] ?: 0
+                            )
                         }
 
-                        numeroSolicitud = solicitudViewModel.agregarSolicitud(detalles, total, metodoElegido!!)
+                        solicitudViewModel.enviarSolicitud(
+                            items = items,
+                            metodoPago = metodoElegido!!,
+                            onExito = { solicitud ->
+                                numeroSolicitud = solicitud.id
+                                carritoViewModel.vaciar()
+                            }
+                        )
                         mostrarConfirmacion = false
                     }
                 ) {
@@ -228,7 +236,20 @@ fun CheckoutScreen(
         )
     }
 
-    if (numeroSolicitud != 0) {
+    if (mensajeServidor != "") {
+        AlertDialog(
+            onDismissRequest = { solicitudViewModel.mensajeMostrado() },
+            title = { Text("Error") },
+            text = { Text(mensajeServidor) },
+            confirmButton = {
+                TextButton(onClick = { solicitudViewModel.mensajeMostrado() }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
+
+    if (numeroSolicitud != 0L) {
         AlertDialog(
             onDismissRequest = { },
             title = { Text("¡Solicitud enviada!") },
@@ -237,7 +258,6 @@ fun CheckoutScreen(
                 TextButton(
                     onClick = {
                         numeroSolicitud = 0
-                        carritoViewModel.vaciar()
                         navController.navigate(Routes.SOLICITUDES) {
                             popUpTo(Routes.CATALOGO)
                         }

@@ -7,18 +7,21 @@ import com.example.ArtesanApp.database.AppDatabase
 import com.example.ArtesanApp.model.Favorito
 import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.repository.FavoritoRepository
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FavoritoViewModel(application: Application)
     : AndroidViewModel(application) {
     private val repository: FavoritoRepository
 
-    private val usuarioId: Long = 1
+    private var usuarioId: Long = 0
 
-    val favoritos: StateFlow<List<Producto>>
+    private var lectura: Job? = null
+
+    private val _favoritos = MutableStateFlow<List<Favorito>>(emptyList())
+    val favoritos: StateFlow<List<Favorito>> = _favoritos
 
     init {
 
@@ -27,12 +30,18 @@ class FavoritoViewModel(application: Application)
             .favoritoDao()
 
         repository = FavoritoRepository(favoritoDao)
+    }
 
-        favoritos = repository.favoritosListar(usuarioId).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    fun cargarFavoritos(idUsuario: Long) {
+
+        usuarioId = idUsuario
+
+        lectura?.cancel()
+        lectura = viewModelScope.launch {
+            repository.favoritosListar(idUsuario).collect { lista ->
+                _favoritos.value = lista
+            }
+        }
     }
 
     fun cambiarFavorito(producto: Producto, esFavorito: Boolean) {

@@ -1,6 +1,9 @@
 package com.example.ArtesanApp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,11 +12,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ArtesanApp.view.CarritoScreen
 import com.example.ArtesanApp.view.CatalogoScreen
 import com.example.ArtesanApp.view.CheckoutScreen
+import com.example.ArtesanApp.view.DetallePedidoAdminScreen
 import com.example.ArtesanApp.view.DetalleProductoScreen
 import com.example.ArtesanApp.view.DetalleSolicitudScreen
 import com.example.ArtesanApp.view.FavoritosScreen
 import com.example.ArtesanApp.view.InventarioScreen
 import com.example.ArtesanApp.view.LoginScreen
+import com.example.ArtesanApp.view.PedidosAdminScreen
 import com.example.ArtesanApp.view.ProductoFormScreen
 import com.example.ArtesanApp.view.QrScreen
 import com.example.ArtesanApp.view.RegistroScreen
@@ -21,6 +26,8 @@ import com.example.ArtesanApp.view.SolicitudesScreen
 import com.example.ArtesanApp.view.WelcomeScreen
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.FavoritoViewModel
+import com.example.ArtesanApp.viewmodel.LoginViewModel
+import com.example.ArtesanApp.viewmodel.PedidosAdminViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
 import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 
@@ -28,12 +35,16 @@ import com.example.ArtesanApp.viewmodel.SolicitudViewModel
 fun AppNavigation(
     navController: NavHostController = rememberNavController()
 ) {
+    val loginViewModel: LoginViewModel = viewModel()
     val productoViewModel: ProductoViewModel = viewModel()
     val favoritoViewModel: FavoritoViewModel = viewModel()
     val carritoViewModel: CarritoViewModel = viewModel()
     val solicitudViewModel: SolicitudViewModel = viewModel()
+    val pedidosAdminViewModel: PedidosAdminViewModel = viewModel()
 
-    val esAdmin = true
+    val usuario by loginViewModel.usuario.collectAsState()
+
+    val esAdmin = usuario?.rol == "ADMIN"
 
     NavHost(
         navController = navController,
@@ -59,7 +70,10 @@ fun AppNavigation(
         composable(Routes.LOGIN) {
             LoginScreen(
                 navController = navController,
-                onLoginClick = { correo, contrasena ->
+                loginViewModel = loginViewModel,
+                onLoginExitoso = { usuarioLogueado ->
+                    favoritoViewModel.cargarFavoritos(usuarioLogueado.id)
+
                     navController.navigate(Routes.CATALOGO) {
                         popUpTo(Routes.WELCOME) { inclusive = true }
                     }
@@ -79,7 +93,19 @@ fun AppNavigation(
                 productoViewModel = productoViewModel,
                 favoritoViewModel = favoritoViewModel,
                 carritoViewModel = carritoViewModel,
-                esAdmin = esAdmin
+                esAdmin = esAdmin,
+                nombreUsuario = usuario?.nombre ?: "",
+                onCerrarSesionClick = {
+                    loginViewModel.cerrarSesion()
+                    productoViewModel.limpiar()
+                    carritoViewModel.vaciar()
+                    solicitudViewModel.limpiar()
+                    pedidosAdminViewModel.limpiar()
+
+                    navController.navigate(Routes.WELCOME) {
+                        popUpTo(0)
+                    }
+                }
             )
         }
 
@@ -98,6 +124,7 @@ fun AppNavigation(
         composable(Routes.FAVORITOS) {
             FavoritosScreen(
                 navController = navController,
+                productoViewModel = productoViewModel,
                 favoritoViewModel = favoritoViewModel,
                 carritoViewModel = carritoViewModel
             )
@@ -117,6 +144,23 @@ fun AppNavigation(
                 navController = navController,
                 idProducto = idProducto,
                 productoViewModel = productoViewModel
+            )
+        }
+
+        composable(Routes.PEDIDOS_ADMIN) {
+            PedidosAdminScreen(
+                navController = navController,
+                pedidosAdminViewModel = pedidosAdminViewModel
+            )
+        }
+
+        composable("${Routes.PEDIDO_ADMIN}/{idPedido}") { backStackEntry ->
+            val idPedido = backStackEntry.arguments?.getString("idPedido")?.toLongOrNull() ?: 0
+
+            DetallePedidoAdminScreen(
+                navController = navController,
+                idPedido = idPedido,
+                pedidosAdminViewModel = pedidosAdminViewModel
             )
         }
 
@@ -144,14 +188,24 @@ fun AppNavigation(
             )
         }
 
-        composable("${Routes.SOLICITUD}/{numero}") { backStackEntry ->
-            val numero = backStackEntry.arguments?.getString("numero")?.toIntOrNull() ?: 0
+        composable("${Routes.SOLICITUD}/{idSolicitud}") { backStackEntry ->
+            val idSolicitud = backStackEntry.arguments?.getString("idSolicitud")?.toLongOrNull() ?: 0
 
             DetalleSolicitudScreen(
                 navController = navController,
-                numeroSolicitud = numero,
+                idSolicitud = idSolicitud,
                 solicitudViewModel = solicitudViewModel
             )
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val rutasSinLogin = listOf(Routes.WELCOME, Routes.QR, Routes.LOGIN, Routes.REGISTRO)
+
+        if (usuario == null && navController.currentDestination?.route !in rutasSinLogin) {
+            navController.navigate(Routes.WELCOME) {
+                popUpTo(0)
+            }
         }
     }
 }

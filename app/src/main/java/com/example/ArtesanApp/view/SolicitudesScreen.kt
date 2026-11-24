@@ -17,11 +17,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +42,7 @@ import com.example.ArtesanApp.componentes.BarraSuperior
 import com.example.ArtesanApp.componentes.Encabezado
 import com.example.ArtesanApp.componentes.EtiquetaEstado
 import com.example.ArtesanApp.componentes.ImagenProducto
+import com.example.ArtesanApp.componentes.formatearFecha
 import com.example.ArtesanApp.componentes.formatearPrecio
 import com.example.ArtesanApp.model.Solicitud
 import com.example.ArtesanApp.ui.theme.Borde
@@ -53,10 +59,26 @@ fun SolicitudesScreen(
     solicitudViewModel: SolicitudViewModel = viewModel()
 ) {
     val solicitudes by solicitudViewModel.solicitudes.collectAsState()
+    val cargando by solicitudViewModel.cargando.collectAsState()
+    val mensajeServidor by solicitudViewModel.mensaje.collectAsState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        solicitudViewModel.cargarSolicitudes()
+    }
+
+    LaunchedEffect(mensajeServidor) {
+        if (mensajeServidor != "") {
+            snackbarHostState.showSnackbar(mensajeServidor)
+            solicitudViewModel.mensajeMostrado()
+        }
+    }
 
     Scaffold(
         topBar = { BarraSuperior() },
         bottomBar = { BarraInferior(navController, Routes.SOLICITUDES) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Fondo
     ) { innerPadding ->
 
@@ -75,14 +97,16 @@ fun SolicitudesScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (solicitudes.isEmpty()) {
+            if (cargando && solicitudes.isEmpty()) {
+                CircularProgressIndicator()
+            } else if (solicitudes.isEmpty()) {
                 Text(text = "Aún no tienes solicitudes de compra.", color = TextoSecundario)
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(solicitudes.reversed()) { solicitud ->
+                    items(solicitudes) { solicitud ->
                         TarjetaSolicitud(
                             solicitud = solicitud,
-                            onClick = { navController.navigate("${Routes.SOLICITUD}/${solicitud.numero}") }
+                            onClick = { navController.navigate("${Routes.SOLICITUD}/${solicitud.id}") }
                         )
                     }
                 }
@@ -109,7 +133,7 @@ fun TarjetaSolicitud(
             verticalAlignment = Alignment.CenterVertically
         ) {
             ImagenProducto(
-                categoria = solicitud.detalles.first().categoria,
+                categoria = solicitud.detalles.first().clasificacion,
                 tamanoIcono = 36.sp,
                 modifier = Modifier
                     .size(80.dp)
@@ -120,13 +144,13 @@ fun TarjetaSolicitud(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Solicitud N° ${solicitud.numero}",
+                    text = "Solicitud N° ${solicitud.id}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Serif,
                     color = Marino
                 )
-                Text(text = solicitud.fecha, fontSize = 13.sp, color = TextoSecundario)
+                Text(text = formatearFecha(solicitud.fecha), fontSize = 13.sp, color = TextoSecundario)
 
                 Spacer(modifier = Modifier.height(6.dp))
 
