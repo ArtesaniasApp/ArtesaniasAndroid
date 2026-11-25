@@ -1,30 +1,51 @@
 package com.example.ArtesanApp.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.ArtesanApp.database.AppDatabase
+import com.example.ArtesanApp.model.ItemCarrito
 import com.example.ArtesanApp.model.Producto
+import com.example.ArtesanApp.repository.CarritoRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class CarritoViewModel : ViewModel() {
+class CarritoViewModel(application: Application)
+    : AndroidViewModel(application) {
+    private val repository: CarritoRepository
+
+    private var usuarioId: Long = 0
+
+    private var lectura: Job? = null
 
     private val _carrito = MutableStateFlow<Map<Long, Int>>(emptyMap())
-    val carrito = _carrito.asStateFlow()
+    val carrito: StateFlow<Map<Long, Int>> = _carrito
+
+    init {
+
+        val carritoDao = AppDatabase
+            .getDatabase(application)
+            .carritoDao()
+
+        repository = CarritoRepository(carritoDao)
+    }
+
+    fun cargarCarrito(idUsuario: Long) {
+
+        usuarioId = idUsuario
+
+        lectura?.cancel()
+        lectura = viewModelScope.launch {
+            repository.carritoListar(idUsuario).collect { lista ->
+                _carrito.value = lista.associate { it.productoId to it.cantidad }
+            }
+        }
+    }
 
     fun agregar(producto: Producto): Boolean {
-        val cantidadActual = _carrito.value[producto.id] ?: 0
-
-        if (cantidadActual >= producto.stockDisponible) {
-            return false
-        }
-
-        _carrito.update { actual ->
-            actual + (
-                    producto.id to (cantidadActual + 1)
-                    )
-        }
-
-        return true
+        return agregarCantidad(producto, 1)
     }
 
     fun agregarCantidad(producto: Producto, cantidad: Int): Boolean {
@@ -34,36 +55,53 @@ class CarritoViewModel : ViewModel() {
             return false
         }
 
-        _carrito.update { actual ->
-            actual + (producto.id to (cantidadActual + cantidad))
-        }
+        almacenar(producto.id, cantidadActual + cantidad)
 
         return true
     }
 
-    fun quitar(productoId: Long) {
-        _carrito.update { actual ->
-            val cantidad = actual[productoId] ?: return@update actual
+    fun incrementar(producto: Producto): Boolean {
+        return agregar(producto)
+    }
 
-            if (cantidad <= 1) {
-                actual - productoId
-            } else {
-                actual + (productoId to cantidad - 1)
-            }
+    fun quitar(productoId: Long) {
+        val cantidadActual = _carrito.value[productoId] ?: 0
+
+        if (cantidadActual <= 1) {
+            eliminar(productoId)
+        } else {
+            almacenar(productoId, cantidadActual - 1)
         }
     }
 
     fun eliminar(productoId: Long) {
-        _carrito.update { actual ->
-            actual - productoId
+        viewModelScope.launch {
+            repository.itemEliminar(usuarioId, productoId)
         }
     }
 
     fun vaciar() {
+        viewModelScope.launch {
+            repository.carritoVaciar(usuarioId)
+        }
+    }
+
+    fun limpiar() {
+        lectura?.cancel()
+        usuarioId = 0
         _carrito.value = emptyMap()
     }
 
-    fun incrementar(producto: Producto): Boolean {
-        return agregar(producto)
+    private fun almacenar(productoId: Long, cantidad: Int) {
+
+        val item = ItemCarrito(
+            usuarioId = usuarioId,
+            productoId = productoId,
+            cantidad = cantidad
+        )
+
+        viewModelScope.launch {
+            repository.itemAlmacenar(item)
+        }
     }
 }
