@@ -123,7 +123,6 @@ fun DetalleProductoScreen(
 
             ImagenProducto(
                 categoria = producto.clasificacion,
-                tamanoIcono = 90.sp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp)
