@@ -73,6 +73,7 @@ fun AppNavigation(
                 loginViewModel = loginViewModel,
                 onLoginExitoso = { usuarioLogueado ->
                     favoritoViewModel.cargarFavoritos(usuarioLogueado.id)
+                    carritoViewModel.cargarCarrito(usuarioLogueado.id)
 
                     navController.navigate(Routes.CATALOGO) {
                         popUpTo(Routes.WELCOME) { inclusive = true }
@@ -98,7 +99,7 @@ fun AppNavigation(
                 onCerrarSesionClick = {
                     loginViewModel.cerrarSesion()
                     productoViewModel.limpiar()
-                    carritoViewModel.vaciar()
+                    carritoViewModel.limpiar()
                     solicitudViewModel.limpiar()
                     pedidosAdminViewModel.limpiar()
 
