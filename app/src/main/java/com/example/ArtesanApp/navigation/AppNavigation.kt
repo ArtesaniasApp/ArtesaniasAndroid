@@ -169,7 +169,8 @@ fun AppNavigation(
             CarritoScreen(
                 navController = navController,
                 carritoViewModel = carritoViewModel,
-                productoViewModel = productoViewModel
+                productoViewModel = productoViewModel,
+                esAdmin = esAdmin
             )
         }
 
