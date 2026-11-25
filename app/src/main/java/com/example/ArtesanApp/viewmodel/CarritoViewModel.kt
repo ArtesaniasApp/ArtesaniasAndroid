@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ArtesanApp.database.AppDatabase
+import com.example.ArtesanApp.model.EstadoProducto
 import com.example.ArtesanApp.model.ItemCarrito
 import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.repository.CarritoRepository
@@ -62,6 +63,29 @@ class CarritoViewModel(application: Application)
 
     fun incrementar(producto: Producto): Boolean {
         return agregar(producto)
+    }
+
+    fun revisarProducto(producto: Producto, cantidad: Int): String {
+
+        if (producto.estado == EstadoProducto.INACTIVO) {
+            return "Este producto ya no está disponible. Elimínalo para continuar."
+        }
+
+        if (producto.stockDisponible == 0) {
+            return "Producto agotado. Elimínalo para continuar."
+        }
+
+        if (cantidad > producto.stockDisponible) {
+            return "Stock insuficiente: quedan ${producto.stockDisponible}. Ajusta la cantidad."
+        }
+
+        return ""
+    }
+
+    fun productosNoDisponibles(productos: List<Producto>): List<Long> {
+        return _carrito.value.keys.filter { productoId ->
+            productos.none { it.id == productoId }
+        }
     }
 
     fun quitar(productoId: Long) {

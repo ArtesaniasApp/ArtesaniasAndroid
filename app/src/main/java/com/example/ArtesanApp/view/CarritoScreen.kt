@@ -27,10 +27,13 @@ import com.example.ArtesanApp.navigation.Routes
 fun CarritoScreen(
     navController: NavController,
     carritoViewModel: CarritoViewModel = viewModel(),
-    productoViewModel: ProductoViewModel = viewModel()
+    productoViewModel: ProductoViewModel = viewModel(),
+    esAdmin: Boolean = false
 ) {
     val cantidades by carritoViewModel.carrito.collectAsState()
     val productos by productoViewModel.productos.collectAsState()
+    val cargando by productoViewModel.cargando.collectAsState()
+    val mensajeServidor by productoViewModel.mensaje.collectAsState()
 
     val productosCarrito = productos.filter {
         cantidades.containsKey(it.id)
@@ -40,8 +43,32 @@ fun CarritoScreen(
         producto.precioBase * (cantidades[producto.id] ?: 0)
     }
 
+    val hayProblemas = productosCarrito.any { producto ->
+        carritoViewModel.revisarProducto(producto, cantidades[producto.id] ?: 0) != ""
+    }
+
+    val noDisponibles = if (productos.isEmpty()) {
+        emptyList()
+    } else {
+        carritoViewModel.productosNoDisponibles(productos)
+    }
+
+    val puedeContinuar = !cargando && !hayProblemas &&
+            noDisponibles.isEmpty() && productosCarrito.isNotEmpty()
+
     val snackbarHostState = remember { SnackbarHostState() }
     val alcance = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        productoViewModel.cargarProductos(esAdmin)
+    }
+
+    LaunchedEffect(mensajeServidor) {
+        if (mensajeServidor != "") {
+            snackbarHostState.showSnackbar(mensajeServidor)
+            productoViewModel.mensajeMostrado()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -66,7 +93,7 @@ fun CarritoScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            if (productosCarrito.isEmpty()) {
+            if (cantidades.isEmpty()) {
                 Text("Tu carrito está vacío.")
             } else {
                 LazyColumn(
@@ -82,6 +109,7 @@ fun CarritoScreen(
                         CarritoItem(
                             producto = producto,
                             cantidad = cantidad,
+                            aviso = carritoViewModel.revisarProducto(producto, cantidad),
                             onQuitar = {
                                 carritoViewModel.quitar(producto.id)
                             },
@@ -103,6 +131,26 @@ fun CarritoScreen(
                     }
                 }
 
+                if (noDisponibles.isNotEmpty()) {
+                    Spacer(Modifier.height(12.dp))
+
+                    Text(
+                        text = "Productos que ya no están disponibles: ${noDisponibles.size}",
+                        color = Color.Red,
+                        fontSize = 14.sp
+                    )
+
+                    TextButton(
+                        onClick = {
+                            noDisponibles.forEach { productoId ->
+                                carritoViewModel.eliminar(productoId)
+                            }
+                        }
+                    ) {
+                        Text("Quitar no disponibles")
+                    }
+                }
+
                 Spacer(Modifier.height(16.dp))
 
                 Text(
@@ -116,9 +164,18 @@ fun CarritoScreen(
                     onClick = {
                         navController.navigate(Routes.CHECKOUT)
                     },
+                    enabled = puedeContinuar,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Continuar compra")
+                }
+
+                if (hayProblemas || noDisponibles.isNotEmpty()) {
+                    Text(
+                        text = "Corrige los productos con aviso para continuar.",
+                        color = Color.Red,
+                        fontSize = 13.sp
+                    )
                 }
 
                 TextButton(
@@ -136,6 +193,7 @@ fun CarritoScreen(
 private fun CarritoItem(
     producto: Producto,
     cantidad: Int,
+    aviso: String,
     onQuitar: () -> Unit,
     onIncrementar: () -> Unit,
     onEliminar: () -> Unit
@@ -168,6 +226,10 @@ private fun CarritoItem(
             Text(
                 "Subtotal: ${formatearPrecio(producto.precioBase * cantidad)}"
             )
+
+            if (aviso != "") {
+                Text(text = aviso, color = Color.Red, fontSize = 13.sp)
+            }
 
             Spacer(Modifier.height(8.dp))
 
