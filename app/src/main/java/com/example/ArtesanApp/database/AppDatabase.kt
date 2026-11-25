@@ -4,16 +4,19 @@ import android.content.Context
 import androidx.room3.Database
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
+import com.example.ArtesanApp.dao.CarritoDao
 import com.example.ArtesanApp.dao.FavoritoDao
 import com.example.ArtesanApp.model.Favorito
+import com.example.ArtesanApp.model.ItemCarrito
 
 @Database(
-    entities = [Favorito::class],
-    version = 4,
+    entities = [Favorito::class, ItemCarrito::class],
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun favoritoDao(): FavoritoDao
+    abstract fun carritoDao(): CarritoDao
 
     companion object {
         @Volatile
