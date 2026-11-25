@@ -207,7 +207,6 @@ fun TarjetaCarrusel(categoria: String) {
     ) {
         ImagenProducto(
             categoria = categoria,
-            tamanoIcono = 96.sp,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(260.dp)

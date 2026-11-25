@@ -16,10 +16,11 @@ import androidx.navigation.NavController
 import com.example.ArtesanApp.componentes.BarraInferior
 import com.example.ArtesanApp.componentes.BarraSuperior
 import com.example.ArtesanApp.componentes.ImagenProducto
+import com.example.ArtesanApp.componentes.formatearPrecio
 import com.example.ArtesanApp.model.Producto
 import com.example.ArtesanApp.viewmodel.CarritoViewModel
 import com.example.ArtesanApp.viewmodel.ProductoViewModel
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import com.example.ArtesanApp.navigation.Routes
 
 @Composable
@@ -36,9 +37,11 @@ fun CarritoScreen(
     }
 
     val total = productosCarrito.sumOf { producto ->
-        producto.precioBase.toLong() *
-                (cantidades[producto.id] ?: 0)
+        producto.precioBase * (cantidades[producto.id] ?: 0)
     }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val alcance = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -46,7 +49,8 @@ fun CarritoScreen(
         },
         bottomBar = {
             BarraInferior(navController, Routes.CARRITO)
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
 
         Column(
@@ -82,7 +86,15 @@ fun CarritoScreen(
                                 carritoViewModel.quitar(producto.id)
                             },
                             onIncrementar = {
-                                carritoViewModel.incrementar(producto)
+                                val agregado = carritoViewModel.incrementar(producto)
+
+                                if (!agregado) {
+                                    alcance.launch {
+                                        snackbarHostState.showSnackbar(
+                                            "Stock máximo alcanzado (${producto.stockDisponible} unidades)"
+                                        )
+                                    }
+                                }
                             },
                             onEliminar = {
                                 carritoViewModel.eliminar(producto.id)
@@ -94,7 +106,7 @@ fun CarritoScreen(
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text = "Total: $${total}",
+                    text = "Total: ${formatearPrecio(total)}",
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -151,10 +163,10 @@ private fun CarritoItem(
 
             Spacer(Modifier.height(4.dp))
 
-            Text("Precio unitario: $${producto.precioBase}")
+            Text("Precio unitario: ${formatearPrecio(producto.precioBase)}")
             Text("Cantidad: $cantidad")
             Text(
-                "Subtotal: $${producto.precioBase.toLong() * cantidad}"
+                "Subtotal: ${formatearPrecio(producto.precioBase * cantidad)}"
             )
 
             Spacer(Modifier.height(8.dp))

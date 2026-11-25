@@ -1,36 +1,30 @@
 package com.example.ArtesanApp.componentes
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Text
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.sp
-import com.example.ArtesanApp.ui.theme.CelesteClaro
-import com.example.ArtesanApp.ui.theme.Rosado
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.ArtesanApp.R
 
 @Composable
 fun ImagenProducto(
     categoria: String,
-    modifier: Modifier = Modifier,
-    tamanoIcono: TextUnit = 56.sp
+    modifier: Modifier = Modifier
 ) {
-    val icono = when (categoria) {
-        "Cerámica" -> "🏺"
-        "Textil" -> "🧶"
-        "Madera" -> "🪵"
-        "Joyería" -> "💍"
-        "Cestería" -> "🧺"
-        else -> "🎁"
+    val imagen = when (categoria) {
+        "Cerámica" -> R.drawable.ceramica
+        "Textil" -> R.drawable.textil
+        "Madera" -> R.drawable.madera
+        "Joyería" -> R.drawable.joyeria
+        "Cestería" -> R.drawable.cesteria
+        else -> R.drawable.artesania
     }
 
-    Box(
-        modifier = modifier.background(Brush.linearGradient(listOf(CelesteClaro, Rosado))),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = icono, fontSize = tamanoIcono)
-    }
+    Image(
+        painter = painterResource(imagen),
+        contentDescription = categoria,
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+    )
 }
