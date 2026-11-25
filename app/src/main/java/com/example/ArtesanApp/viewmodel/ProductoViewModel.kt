@@ -117,7 +117,12 @@ class ProductoViewModel : ViewModel() {
         viewModelScope.launch {
             _guardando.value = true
             try {
-                reemplazar(repository.cambiarEstado(producto.id, estado.id))
+                val actualizado = repository.cambiarEstado(producto.id, estado.id)
+                reemplazar(actualizado)
+
+                if (actualizado.estado != nuevoEstado) {
+                    _mensaje.value = "Con stock ${actualizado.stockDisponible} el producto queda ${actualizado.estado.texto}."
+                }
             } catch (e: Exception) {
                 _mensaje.value = mensajeError(e)
             }

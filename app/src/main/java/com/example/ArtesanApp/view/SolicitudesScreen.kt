@@ -134,7 +134,6 @@ fun TarjetaSolicitud(
         ) {
             ImagenProducto(
                 categoria = solicitud.detalles.first().clasificacion,
-                tamanoIcono = 36.sp,
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(14.dp))
