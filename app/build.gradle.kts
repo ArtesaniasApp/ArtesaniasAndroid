@@ -55,20 +55,15 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
-    // Para leer el StateFlow con collectAsStateWithLifecycle() (pantalla QR)
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
 
-    // Lector QR de Google (abre su propia cámara, no necesita permisos)
     implementation(libs.google.code.scanner)
 
-    // Íconos (corazón, carro, búsqueda...). La versión la define el BOM de Compose
     implementation(libs.androidx.compose.material.icons.extended)
 
-    // Retrofit + Gson: conexión con el backend (API REST)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
 
-    // Room 3: base de datos local (favoritos)
     implementation(libs.androidx.room3.runtime)
     ksp(libs.androidx.room3.compiler)
 }
